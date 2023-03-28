@@ -10,5 +10,6 @@ namespace API.Data
         }
 
         public DbSet<Food> Foods => Set<Food>();
+        public DbSet<User> Users => Set<User>();
     }
 }

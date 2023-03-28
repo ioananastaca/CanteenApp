@@ -1,11 +1,11 @@
 using API.Dtos.FoodDtos;
 using API.Models;
 using API.Services.FoodServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class FoodController : Controller
@@ -18,7 +18,7 @@ namespace API.Controllers
             _service = service;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> GetAllFoods()
         {
             return Ok(await _service.GetAllFood());
@@ -45,6 +45,8 @@ namespace API.Controllers
             }
             return Ok();
         }
+
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse<GetFoodDto>>> DeleteFood(int id)
         {
