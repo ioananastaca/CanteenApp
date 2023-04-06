@@ -8,7 +8,9 @@ namespace API
     {
         public AutoMapperProfile()
         {
-            CreateMap<Food,GetFoodDto>();
+            CreateMap<Food,GetFoodDto>()
+                .ForMember(d=>d.CategoryName,s=>s.MapFrom(x=>x.Category.Name))
+                .ForMember(d=>d.FoodTypeName,s=>s.MapFrom(x=>x.Type.Name));
             CreateMap<AddFoodDto,Food>();
             
         }

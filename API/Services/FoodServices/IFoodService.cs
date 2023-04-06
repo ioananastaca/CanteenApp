@@ -8,7 +8,7 @@ namespace API.Services.FoodServices
         Task<ServiceResponse<List<GetFoodDto>>> GetAllFood();
         Task<ServiceResponse<List<GetFoodDto>>> AddFood(AddFoodDto newFood);
         Task<ServiceResponse<GetFoodDto>> GetFoodById(int id);
-        Task<ServiceResponse<GetFoodDto>> UpdateFood(UpdateFoodDto updateFood);
+        Task<ServiceResponse<GetFoodDto>> UpdateFood(int id, UpdateFoodDto updatedFood);
         Task<ServiceResponse<List<GetFoodDto>>> DeleteFood(int id);
     }
 }

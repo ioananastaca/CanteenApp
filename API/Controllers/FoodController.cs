@@ -36,9 +36,9 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> UpdateFood(UpdateFoodDto updatedFood)
+        public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> UpdateFood(int id,UpdateFoodDto updatedFood)
         {
-            var response = await _service.UpdateFood(updatedFood);
+            var response = await _service.UpdateFood(id, updatedFood);
             if (response.Data is null)
             {
                 return NotFound(response);
@@ -46,7 +46,7 @@ namespace API.Controllers
             return Ok();
         }
 
-        [Authorize]
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse<GetFoodDto>>> DeleteFood(int id)
         {
