@@ -1,7 +1,6 @@
 using API.Dtos.FoodDtos;
 using API.Models;
 using API.Services.FoodServices;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -29,6 +28,18 @@ namespace API.Controllers
             return Ok(await _service.GetFoodById(id));
         }
 
+        [HttpGet("category/{categoryId}")]
+        public async Task<ActionResult<ServiceResponse<GetFoodDto>>> GetAllFoodsByCategory(int categoryId)
+        {
+            return Ok(await _service.GetAllFoodsByCategory(categoryId));
+        }
+
+        [HttpGet("type/{typeId}")]
+        public async Task<ActionResult<ServiceResponse<GetFoodDto>>> GetAllFoodsByType(int typeId)
+        {
+            return Ok(await _service.GetAllFoodsByType(typeId));
+        }
+
         [HttpPost]
         public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> AddFood(AddFoodDto newFood)
         {
@@ -36,7 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> UpdateFood(int id,UpdateFoodDto updatedFood)
+        public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> UpdateFood(int id, UpdateFoodDto updatedFood)
         {
             var response = await _service.UpdateFood(id, updatedFood);
             if (response.Data is null)

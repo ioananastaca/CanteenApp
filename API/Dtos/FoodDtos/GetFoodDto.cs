@@ -1,3 +1,5 @@
+using API.Models;
+
 namespace API.Dtos.FoodDtos
 {
     public class GetFoodDto
@@ -9,5 +11,6 @@ namespace API.Dtos.FoodDtos
         public decimal Price { get; set; } 
         public string CategoryName { get; set; } 
         public string FoodTypeName { get; set; } 
+        public List<string> AllergenNames { get; set; }
     }
 }

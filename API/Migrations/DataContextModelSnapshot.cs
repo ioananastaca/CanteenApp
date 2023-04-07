@@ -56,6 +56,29 @@ namespace API.Migrations
                     b.ToTable("Foods");
                 });
 
+            modelBuilder.Entity("API.Models.FoodAllergen", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AllergenId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FoodId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AllergenId");
+
+                    b.HasIndex("FoodId");
+
+                    b.ToTable("FoodAllergens");
+                });
+
             modelBuilder.Entity("API.Models.FoodCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -70,6 +93,22 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FoodCategories");
+                });
+
+            modelBuilder.Entity("API.Models.FoodDir.Allergen", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Allergens");
                 });
 
             modelBuilder.Entity("API.Models.FoodType", b =>
@@ -135,9 +174,38 @@ namespace API.Migrations
                     b.Navigation("Type");
                 });
 
+            modelBuilder.Entity("API.Models.FoodAllergen", b =>
+                {
+                    b.HasOne("API.Models.FoodDir.Allergen", "Allergen")
+                        .WithMany("FoodAllergens")
+                        .HasForeignKey("AllergenId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Food", "Food")
+                        .WithMany("FoodAllergens")
+                        .HasForeignKey("FoodId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Allergen");
+
+                    b.Navigation("Food");
+                });
+
+            modelBuilder.Entity("API.Models.Food", b =>
+                {
+                    b.Navigation("FoodAllergens");
+                });
+
             modelBuilder.Entity("API.Models.FoodCategory", b =>
                 {
                     b.Navigation("Foods");
+                });
+
+            modelBuilder.Entity("API.Models.FoodDir.Allergen", b =>
+                {
+                    b.Navigation("FoodAllergens");
                 });
 
             modelBuilder.Entity("API.Models.FoodType", b =>

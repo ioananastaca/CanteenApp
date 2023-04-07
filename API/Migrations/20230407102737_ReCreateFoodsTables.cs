@@ -5,11 +5,24 @@
 namespace API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialcreate : Migration
+    public partial class ReCreateFoodsTables : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Allergens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Allergens", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "FoodCategories",
                 columns: table => new
@@ -83,6 +96,42 @@ namespace API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "FoodAllergens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FoodId = table.Column<int>(type: "int", nullable: false),
+                    AllergenId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FoodAllergens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FoodAllergens_Allergens_AllergenId",
+                        column: x => x.AllergenId,
+                        principalTable: "Allergens",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FoodAllergens_Foods_FoodId",
+                        column: x => x.FoodId,
+                        principalTable: "Foods",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodAllergens_AllergenId",
+                table: "FoodAllergens",
+                column: "AllergenId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FoodAllergens_FoodId",
+                table: "FoodAllergens",
+                column: "FoodId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Foods_CategoryId",
                 table: "Foods",
@@ -98,10 +147,16 @@ namespace API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Foods");
+                name: "FoodAllergens");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Allergens");
+
+            migrationBuilder.DropTable(
+                name: "Foods");
 
             migrationBuilder.DropTable(
                 name: "FoodCategories");

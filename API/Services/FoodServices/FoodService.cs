@@ -86,6 +86,8 @@ namespace API.Services.FoodServices
             var dbFoods = await _context.Foods
                 .Include(x => x.Category)
                 .Include(x => x.Type)
+                .Include(x => x.FoodAllergens)
+                    .ThenInclude(fa => fa.Allergen)
                 .ToListAsync();
 
             serviceResponse.Data = dbFoods.Select(x => _mapper.Map<GetFoodDto>(x)).ToList();
@@ -99,6 +101,8 @@ namespace API.Services.FoodServices
             var dbFood = await _context.Foods
                 .Include(x => x.Category)
                 .Include(x => x.Type)
+                .Include(x => x.FoodAllergens)
+                    .ThenInclude(fa => fa.Allergen)
                 .FirstOrDefaultAsync(x => x.Id == id);
             serviceResponse.Data = _mapper.Map<GetFoodDto>(dbFood);
             return serviceResponse;
@@ -153,6 +157,30 @@ namespace API.Services.FoodServices
             return serviceResponse;
         }
 
+        public async Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodsByCategory(int categoryId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetFoodDto>>();
+
+            var category = await _context.FoodCategories.FirstOrDefaultAsync(c => c.Id == categoryId);
+            if (category == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Invalid category id.";
+                return serviceResponse;
+            }
+
+            var dbFoods = await _context.Foods
+                .Include(x => x.Category)
+                .Include(x => x.Type)
+                .Include(x => x.FoodAllergens)
+                  .ThenInclude(fa => fa.Allergen)
+                .Where(x => x.Category.Id == categoryId)
+                .ToListAsync();
+
+            serviceResponse.Data = dbFoods.Select(x => _mapper.Map<GetFoodDto>(x)).ToList();
+            return serviceResponse;
+        }
+
         private async Task<bool> ValidateCategory(int categoryId)
         {
             var category = await _context.FoodCategories.FindAsync(categoryId);
@@ -171,6 +199,22 @@ namespace API.Services.FoodServices
                 return false;
             }
             return true;
+        }
+
+        public async Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodsByType(int typeId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetFoodDto>>();
+
+            var types = await _context.Foods
+                .Include(x => x.Category)
+                .Include(x => x.Type)
+                .Include(x => x.FoodAllergens)
+                  .ThenInclude(fa => fa.Allergen)
+                .Where(x => x.Type.Id == typeId)
+                .ToListAsync();
+
+            serviceResponse.Data = types.Select(x => _mapper.Map<GetFoodDto>(x)).ToList();
+            return serviceResponse;
         }
     }
 }

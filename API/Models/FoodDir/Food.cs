@@ -11,5 +11,6 @@ namespace API.Models
         public FoodCategory Category { get; set; }
         public int FoodTypeId { get; set; }
         public FoodType Type { get; set; }
+        public List<FoodAllergen> FoodAllergens { get; set; }
     }
 }
