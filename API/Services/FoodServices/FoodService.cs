@@ -216,5 +216,107 @@ namespace API.Services.FoodServices
             serviceResponse.Data = types.Select(x => _mapper.Map<GetFoodDto>(x)).ToList();
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<GetFoodDto>> AddAllergenToFood(int foodId, int allergenId)
+        {
+            var serviceResponse = new ServiceResponse<GetFoodDto>();
+
+            var food = await _context.Foods.Include(x => x.Category)
+                                            .Include(x => x.Type)
+                                            .Include(f => f.FoodAllergens)
+                                                .ThenInclude(fa => fa.Allergen)
+                                            .FirstOrDefaultAsync(f => f.Id == foodId);
+            if (food == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Food {food.Name} not found.";
+                return serviceResponse;
+            }
+
+            var allergen = await _context.Allergens.FindAsync(allergenId);
+            if (allergen == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Allergen {allergen.Name} not found.";
+                return serviceResponse;
+            }
+
+            if (food.FoodAllergens.Any(fa => fa.AllergenId == allergenId))
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Food already has this allergen.";
+                return serviceResponse;
+            }
+
+            food.FoodAllergens.Add(new FoodAllergen { AllergenId = allergenId });
+
+            await _context.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<GetFoodDto>(food);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<GetFoodDto>> DeleteAllergenFromFood(int foodId, int allergenId)
+        {
+            var serviceResponse = new ServiceResponse<GetFoodDto>();
+
+            var food = await _context.Foods.Include(f => f.Category)
+                                            .Include(f => f.Type)
+                                            .Include(f => f.FoodAllergens)
+                                            .ThenInclude(fa => fa.Allergen)
+                                            .FirstOrDefaultAsync(f => f.Id == foodId);
+            if (food == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Food {food.Name} not found.";
+                return serviceResponse;
+            }
+
+            var allergen = await _context.Allergens.FindAsync(allergenId);
+            if (allergen == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Allergen {allergen.Name} not found.";
+                return serviceResponse;
+            }
+
+            var foodAllergen = food.FoodAllergens.FirstOrDefault(fa => fa.AllergenId == allergenId);
+            if (foodAllergen == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Food does not have this allergen.";
+                return serviceResponse;
+            }
+
+            food.FoodAllergens.Remove(foodAllergen);
+
+            await _context.SaveChangesAsync();
+
+            serviceResponse.Data = _mapper.Map<GetFoodDto>(food);
+            return serviceResponse;
+        }
+
+        public async Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodByAllergen(int allergenId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetFoodDto>>();
+
+            var allergen = await _context.Allergens.FindAsync(allergenId);
+            if (allergen == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Allergen not found.";
+                return serviceResponse;
+            }
+
+            var foods = await _context.Foods.Include(f => f.Category)
+                                             .Include(f => f.Type)
+                                             .Include(f => f.FoodAllergens)
+                                                .ThenInclude(fa => fa.Allergen)
+                                             .Where(f => f.FoodAllergens.Any(fa => fa.AllergenId == allergenId))
+                                             .ToListAsync();
+
+            serviceResponse.Data = _mapper.Map<List<GetFoodDto>>(foods);
+            return serviceResponse;
+        }
     }
 }

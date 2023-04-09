@@ -12,5 +12,8 @@ namespace API.Services.FoodServices
         Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodsByType(int typeId);
         Task<ServiceResponse<GetFoodDto>> UpdateFood(int id, UpdateFoodDto updatedFood);
         Task<ServiceResponse<List<GetFoodDto>>> DeleteFood(int id);
+        Task<ServiceResponse<GetFoodDto>>AddAllergenToFood(int foodId,int allergenId);
+        Task<ServiceResponse<GetFoodDto>>DeleteAllergenFromFood(int foodId,int allergenId);
+        Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodByAllergen(int allergenId);
     }
 }

@@ -1,4 +1,7 @@
 using API.Data;
+using API.Services.AllergensService;
+using API.Services.CategoryAndTypeServices;
+using API.Services.FoodAllergensService;
 using API.Services.FoodServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +31,12 @@ builder.Services.AddSwaggerGen(c =>
     c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 builder.Services.AddScoped<IFoodService, FoodService>();
+builder.Services.AddScoped<IFoodCategoryAndTypeService, FoodCategoryAndTypeService>();
+builder.Services.AddScoped<IAllergensService, AllergensService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option =>
     {

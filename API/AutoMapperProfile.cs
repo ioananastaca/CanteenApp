@@ -1,5 +1,9 @@
+using API.Dtos.AllergensDto;
+using API.Dtos.FoodAllergensDto;
+using API.Dtos.FoodCategoryAndTypeDto;
 using API.Dtos.FoodDtos;
 using API.Models;
+using API.Models.FoodDir;
 using AutoMapper;
 
 namespace API
@@ -15,8 +19,16 @@ namespace API
                 .ForMember(d => d.FoodTypeName, s => s.MapFrom(x => x.Type.Name))
                 .ForMember(dest => dest.AllergenNames,
                  opt => opt.MapFrom(src => src.FoodAllergens != null ? src.FoodAllergens.Select(x => x.Allergen.Name).ToList() : null));
-
             CreateMap<AddFoodDto, Food>();
+
+            CreateMap<AddFoodCategoryDto, FoodCategory>();
+            CreateMap<FoodCategory, GetFoodCategoryDto>();
+
+            CreateMap<AddFoodTypeDto, FoodType>();
+            CreateMap<FoodType, GetFoodTypeDto>();
+
+            CreateMap<AddAllergenDto, Allergen>();
+            CreateMap<Allergen, GetAllergenDto>();
 
         }
     }

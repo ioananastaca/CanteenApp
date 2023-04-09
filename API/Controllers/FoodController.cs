@@ -57,7 +57,6 @@ namespace API.Controllers
             return Ok();
         }
 
-
         [HttpDelete("{id}")]
         public async Task<ActionResult<ServiceResponse<GetFoodDto>>> DeleteFood(int id)
         {
@@ -67,6 +66,43 @@ namespace API.Controllers
                 return NotFound(response);
             }
             return Ok();
+        }
+
+        [HttpPost("AddAllergenToFood/{foodId}/allergen/{allergenId}")]
+        public async Task<ActionResult<ServiceResponse<GetFoodDto>>> AddAllergenToFood(int foodId, int allergenId)
+        {
+            var serviceResponse = await _service.AddAllergenToFood(foodId, allergenId);
+
+            if (!serviceResponse.Success)
+            {
+                return BadRequest(serviceResponse);
+            }
+
+            var foodDto = serviceResponse.Data;
+            return Ok(foodDto);
+        }
+
+        [HttpDelete("DeleteAllergenFromFood/{foodId}/allergens/{allergenId}")]
+        public async Task<ActionResult<ServiceResponse<GetFoodDto>>> DeleteAllergenFromFood(int foodId, int allergenId)
+        {
+            var response = await _service.DeleteAllergenFromFood(foodId, allergenId);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+        [HttpGet("allergen/{allergenId}")]
+        public async Task<ActionResult<ServiceResponse<GetFoodDto>>> GetAllFoodByAllergen(int allergenId)
+        {
+            var response = await _service.GetAllFoodByAllergen((allergenId));
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+            return Ok(response);
         }
     }
 }
