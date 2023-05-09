@@ -1,5 +1,6 @@
 using API.Models;
 using API.Models.FoodDir;
+using API.Models.OderDir;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
@@ -16,5 +17,8 @@ namespace API.Data
         public DbSet<FoodType> FoodTypes => Set<FoodType>();
         public DbSet<Allergen> Allergens => Set<Allergen>();
         public DbSet<FoodAllergen> FoodAllergens => Set<FoodAllergen>();
+        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+
     }
 }

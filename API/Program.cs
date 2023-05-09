@@ -3,6 +3,7 @@ using API.Services.AllergensService;
 using API.Services.CategoryAndTypeServices;
 using API.Services.FoodAllergensService;
 using API.Services.FoodServices;
+using API.Services.OrderService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -36,6 +37,7 @@ builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IFoodCategoryAndTypeService, FoodCategoryAndTypeService>();
 builder.Services.AddScoped<IAllergensService, AllergensService>();
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option =>
