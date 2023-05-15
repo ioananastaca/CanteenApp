@@ -18,9 +18,21 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<OrderDto>>> AddOrder(string address, List<int> foodIds)
+        public async Task<ActionResult<ServiceResponse<OrderDto>>> AddItemToOrder(int foodId, int quantity, string address)
         {
-            var response = await _orderService.AddOrder(address, foodIds);
+            var response = await _orderService.AddItemToOrder(foodId, quantity, address);
+
+            if (!response.Success)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+        [HttpDelete]
+        public async Task<ActionResult<ServiceResponse<OrderDto>>> DeleteItemOrder(int foodId, int quantity, int orderId)
+        {
+            var response = await _orderService.RemoveItemOrder(foodId, quantity, orderId);
 
             if (!response.Success)
             {

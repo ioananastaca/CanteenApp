@@ -7,6 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Food } from "../../app/models/food";
+import { Link } from "react-router-dom";
 
 interface Props {
   food: Food;
@@ -15,7 +16,7 @@ interface Props {
 export default function FoodCard({ food }: Props) {
   return (
     <Card>
-      <CardMedia sx={{ height: 140 }} image={food.ImageUrl} title={food.name} />
+      <CardMedia sx={{ height: 140 }} image={food.imageUrl} title={food.name} />
       <CardContent>
         <Typography gutterBottom variant="h5" color="secondary">
           {food.name}
@@ -28,8 +29,10 @@ export default function FoodCard({ food }: Props) {
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
+        <Button size="small">Adauga la comanda</Button>
+        <Button component={Link} to={`/catalog/${food.id}`} size="small">
+          Detalii
+        </Button>
       </CardActions>
     </Card>
   );

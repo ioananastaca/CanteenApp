@@ -1,6 +1,8 @@
 import { Container, CssBaseline } from "@mui/material";
-import Catalog from "../../features/catalog/Catalog";
 import Header from "./Header";
+import DailyMenu from "../../features/menu/DailyMenu";
+import { Outlet } from "react-router-dom";
+
 
 function App() {
   return (
@@ -8,7 +10,7 @@ function App() {
       <CssBaseline />
       <Header />
       <Container>
-        <Catalog />
+        <Outlet />
       </Container>
     </>
   );
