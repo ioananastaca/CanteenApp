@@ -23,6 +23,19 @@ export default function Catalog() {
   //     },
   //   ]);
   // }
+   // function addFood() {
+  //   setFoods((prevState) => [
+  //     ...prevState,
+  //     {
+  //       id: prevState.length + 101,
+  //       name: "food" + (prevState.length + 1),
+  //       description: "description" + (prevState.length + 1),
+  //       ImageUrl: "https://picsum.photos/200",
+  //       price: 19.99,
+  //     },
+  //   ]);
+  // }
+
 
   return (
     <>
