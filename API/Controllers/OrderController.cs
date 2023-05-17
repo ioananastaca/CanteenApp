@@ -1,45 +1,193 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+using API.Data;
 using API.Dtos.OrderDtos;
 using API.Models;
-using API.Services.OrderService;
-using Microsoft.AspNetCore.Authorization;
+using API.Models.Order;
+using API.Utility;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-
-    [Route("[controller]")]
-    public class OrderController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OrderController : ControllerBase
     {
-        private readonly IOrderService _orderService;
-
-        public OrderController(IOrderService orderService)
+        private readonly DataContext _db;
+        private ApiResponse _response;
+        public OrderController(DataContext db)
         {
-            _orderService = orderService;
+            _db = db;
+            _response = new ApiResponse();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ApiResponse>> GetOrders(string? userId)
+        {
+            try
+            {
+                var orderHeaders = _db.OrderHeaders.Include(u => u.OrderDetails)
+                    .ThenInclude(u => u.Food)
+                    .OrderByDescending(u => u.OrderHeaderId);
+                if (!string.IsNullOrEmpty(userId)){
+                    _response.Result = orderHeaders.Where(u => u.ApplicationUserId == userId);
+                }
+                else
+                {
+                    _response.Result = orderHeaders;
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> GetOrders(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+
+
+                var orderHeaders = _db.OrderHeaders.Include(u => u.OrderDetails)
+                    .ThenInclude(u => u.Food)
+                    .Where(u => u.OrderHeaderId==id);
+                if (orderHeaders == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+                _response.Result = orderHeaders;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
         }
 
         [HttpPost]
-        public async Task<ActionResult<ServiceResponse<OrderDto>>> AddItemToOrder(int foodId, int quantity, string address)
+        public async Task<ActionResult<ApiResponse>> CreateOrder([FromBody] OrderHeaderCreateDto orderHeaderDTO)
         {
-            var response = await _orderService.AddItemToOrder(foodId, quantity, address);
-
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
-            }
+                OrderHeader order = new()
+                {
+                    ApplicationUserId = orderHeaderDTO.ApplicationUserId,
+                    PickupEmail = orderHeaderDTO.PickupEmail,
+                    PickupName = orderHeaderDTO.PickupName,
+                    PickupPhoneNumber = orderHeaderDTO.PickupPhoneNumber,
+                    OrderTotal = orderHeaderDTO.OrderTotal,
+                    OrderDate = DateTime.Now,
+                    StripePaymentIntentID = orderHeaderDTO.StripePaymentIntentID,
+                    TotalFoodItems = orderHeaderDTO.TotalItems,
+                    Status= String.IsNullOrEmpty(orderHeaderDTO.Status)? SD.status_pending : orderHeaderDTO.Status,
+                };
 
-            return Ok(response);
+                if (ModelState.IsValid)
+                {
+                    _db.OrderHeaders.Add(order);
+                    _db.SaveChanges();
+                    foreach(var orderDetailDTO in orderHeaderDTO.OrderDetailsDTO)
+                    {
+                        OrderDetails orderDetails = new()
+                        {
+                            OrderHeaderId = order.OrderHeaderId,
+                            FoodName = orderDetailDTO.FoodName,
+                            FoodId = orderDetailDTO.FoodId,
+                            Price = orderDetailDTO.Price,
+                            Quantity = orderDetailDTO.Quantity,
+                        };
+                        _db.OrderDetails.Add(orderDetails);
+                    }
+                    _db.SaveChanges();
+                    _response.Result = order;
+                    order.OrderDetails = null;
+                    _response.StatusCode = HttpStatusCode.Created;
+                    return Ok(_response);
+                }
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
         }
-        [HttpDelete]
-        public async Task<ActionResult<ServiceResponse<OrderDto>>> DeleteItemOrder(int foodId, int quantity, int orderId)
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<ApiResponse>> UpdateOrderHeader(int id, [FromBody] OrderHeaderUpdateDto orderHeaderUpdateDTO)
         {
-            var response = await _orderService.RemoveItemOrder(foodId, quantity, orderId);
-
-            if (!response.Success)
+            try
             {
-                return BadRequest(response);
-            }
+                if (orderHeaderUpdateDTO == null || id != orderHeaderUpdateDTO.OrderHeaderId)
+                {
+                    _response.IsSuccess=false;
+                    _response.StatusCode=HttpStatusCode.BadRequest;
+                    return BadRequest();
+                }
+                OrderHeader orderFromDb = _db.OrderHeaders.FirstOrDefault(u => u.OrderHeaderId == id);
 
-            return Ok(response);
+                if (orderFromDb == null)
+                {
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest();
+                }
+                if (!string.IsNullOrEmpty(orderHeaderUpdateDTO.PickupName))
+                {
+                    orderFromDb.PickupName = orderHeaderUpdateDTO.PickupName;
+                }
+                if (!string.IsNullOrEmpty(orderHeaderUpdateDTO.PickupPhoneNumber))
+                {
+                    orderFromDb.PickupPhoneNumber = orderHeaderUpdateDTO.PickupPhoneNumber;
+                }
+                if (!string.IsNullOrEmpty(orderHeaderUpdateDTO.PickupEmail))
+                {
+                    orderFromDb.PickupEmail = orderHeaderUpdateDTO.PickupEmail;
+                }
+                if (!string.IsNullOrEmpty(orderHeaderUpdateDTO.Status))
+                {
+                    orderFromDb.Status = orderHeaderUpdateDTO.Status;
+                }
+                if (!string.IsNullOrEmpty(orderHeaderUpdateDTO.StripePaymentIntentID))
+                {
+                    orderFromDb.StripePaymentIntentID = orderHeaderUpdateDTO.StripePaymentIntentID;
+                }
+                _db.SaveChanges();
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return Ok(_response);
+
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
         }
     }
 }

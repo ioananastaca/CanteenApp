@@ -1,6 +1,7 @@
 using API.Models;
 using API.Models.FoodDir;
-using API.Models.OderDir;
+using API.Models.Order;
+using API.Models.Shopping;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,8 +19,11 @@ namespace API.Data
         public DbSet<FoodType> FoodTypes => Set<FoodType>();
         public DbSet<Allergen> Allergens => Set<Allergen>();
         public DbSet<FoodAllergen> FoodAllergens => Set<FoodAllergen>();
-        public DbSet<Order> Orders => Set<Order>();
-        public DbSet<OrderItem> OrderItems => Set<OrderItem>();
+        public DbSet<ShoppingCart>ShoppingCarts{get;set;}
+        public DbSet<CartItem>CartItems{get;set;}
+        public DbSet<OrderHeader>OrderHeaders{get;set;}
+        public DbSet<OrderDetails>OrderDetails{get;set;}
+     
 
     }
 }

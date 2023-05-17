@@ -2,11 +2,9 @@ using API.Dtos.AllergensDto;
 using API.Dtos.FoodAllergensDto;
 using API.Dtos.FoodCategoryAndTypeDto;
 using API.Dtos.FoodDtos;
-using API.Dtos.OrderDtos;
 using API.Dtos.User;
 using API.Models;
 using API.Models.FoodDir;
-using API.Models.OderDir;
 using AutoMapper;
 
 namespace API
@@ -32,12 +30,7 @@ namespace API
 
             CreateMap<AddAllergenDto, Allergen>();
             CreateMap<Allergen, GetAllergenDto>();
-
-           
-            CreateMap<OrderItem, OrderItemDto>();
-
-            CreateMap<Order, OrderDto>();
-
+        
             CreateMap<ApplicationUser, RegisterResponseDto>();
 
         }

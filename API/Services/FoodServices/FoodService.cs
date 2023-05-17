@@ -151,7 +151,7 @@ namespace API.Services.FoodServices
                 existingFood.Name = updatedFood.Name;
                 existingFood.Description = updatedFood.Description;
                 existingFood.ImageUrl = updatedFood.ImageUrl;
-                existingFood.Price = updatedFood.Price;
+                existingFood.Price = (double)updatedFood.Price;
                 existingFood.Category = category;
                 existingFood.Type = type;
 
