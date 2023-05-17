@@ -1,10 +1,13 @@
 using API.Data;
+using API.Models;
 using API.Services.AllergensService;
+using API.Services.AuthServices;
 using API.Services.CategoryAndTypeServices;
 using API.Services.FoodAllergensService;
 using API.Services.FoodServices;
 using API.Services.OrderService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -16,6 +19,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<DataContext>();
+builder.Services.Configure<IdentityOptions>(options=>{
+    options.Password.RequireDigit=false;
+    options.Password.RequiredLength=1;
+    options.Password.RequireLowercase=false;
+    options.Password.RequireUppercase=false;
+    options.Password.RequireNonAlphanumeric=false;
+});
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,8 +47,9 @@ builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IFoodCategoryAndTypeService, FoodCategoryAndTypeService>();
 builder.Services.AddScoped<IAllergensService, AllergensService>();
-builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+// builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+// builder.Services.AddScoped<IRegisterService, RegisterService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(option =>

@@ -3,6 +3,7 @@ using API.Dtos.FoodAllergensDto;
 using API.Dtos.FoodCategoryAndTypeDto;
 using API.Dtos.FoodDtos;
 using API.Dtos.OrderDtos;
+using API.Dtos.User;
 using API.Models;
 using API.Models.FoodDir;
 using API.Models.OderDir;
@@ -35,8 +36,9 @@ namespace API
            
             CreateMap<OrderItem, OrderItemDto>();
 
-           
             CreateMap<Order, OrderDto>();
+
+            CreateMap<ApplicationUser, RegisterResponseDto>();
 
         }
     }

@@ -91,8 +91,12 @@ namespace API.Services.FoodServices
                 .ToListAsync();
 
             serviceResponse.Data = dbFoods.Select(x => _mapper.Map<GetFoodDto>(x)).ToList();
+            serviceResponse.Success = true;
+            serviceResponse.Message = "Success"; // You can customize the success message if needed
+
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<GetFoodDto>> GetFoodById(int id)
         {
@@ -104,6 +108,12 @@ namespace API.Services.FoodServices
                 .Include(x => x.FoodAllergens)
                     .ThenInclude(fa => fa.Allergen)
                 .FirstOrDefaultAsync(x => x.Id == id);
+            if (dbFood == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Food not found.";
+                return serviceResponse;
+            }
             serviceResponse.Data = _mapper.Map<GetFoodDto>(dbFood);
             return serviceResponse;
         }

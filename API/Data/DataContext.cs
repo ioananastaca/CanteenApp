@@ -1,18 +1,19 @@
 using API.Models;
 using API.Models.FoodDir;
 using API.Models.OderDir;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<ApplicationUser>
     {
         public DataContext(DbContextOptions options) : base(options)
         {
         }
-
+        public DbSet<ApplicationUser>ApplicationUsers{get;set;}
         public DbSet<Food> Foods => Set<Food>();
-        public DbSet<User> Users => Set<User>();
+        // public DbSet<User> Users => Set<User>();
         public DbSet<FoodCategory> FoodCategories => Set<FoodCategory>();
         public DbSet<FoodType> FoodTypes => Set<FoodType>();
         public DbSet<Allergen> Allergens => Set<Allergen>();

@@ -1,6 +1,7 @@
 using API.Dtos.FoodDtos;
 using API.Models;
 using API.Services.FoodServices;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -20,12 +21,21 @@ namespace API.Controllers
         [HttpGet("GetAll")]
         public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> GetAllFoods()
         {
-            return Ok(await _service.GetAllFood());
+            var serviceResponse=await _service.GetAllFood();
+
+            return Ok(serviceResponse.Data);
         }
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ServiceResponse<GetFoodDto>>> GetSingleFood(int id)
+        [HttpGet("ById{id}",Name="GetSingleFood")]
+        public async Task<ActionResult<GetFoodDto>> GetSingleFood(int id)
         {
-            return Ok(await _service.GetFoodById(id));
+            var serviceResponse = await _service.GetFoodById(id);
+
+            if (serviceResponse.Data == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(serviceResponse.Data);
         }
 
         [HttpGet("category/{categoryId}")]
