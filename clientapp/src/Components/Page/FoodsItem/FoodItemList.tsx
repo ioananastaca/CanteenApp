@@ -7,7 +7,7 @@ function FoodItemList() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/Food/GetAll")
+    fetch("http://localhost:5000/api/Food")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch food items");
@@ -28,8 +28,8 @@ function FoodItemList() {
 
   return (
     <div className="container row">
-      {foodItems.map((menuItem) => (
-        <FoodItemCart foodItem={menuItem} key={menuItem.id} />
+      {foodItems.map((foodId) => (
+        <FoodItemCart foodItem={foodId} key={foodId.id} />
       ))}
     </div>
   );

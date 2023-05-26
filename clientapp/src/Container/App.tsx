@@ -1,19 +1,86 @@
 import { Route, Routes } from "react-router-dom";
 import { Header, Footer } from "../Components/Layout";
-import { FoodItemDetails, Home, NotFound } from "../Pages";
+import {
+  AccessDenied,
+  AuthenticationTest,
+  AuthenticationTestAdmin,
+  FoodItemDetails,
+  Home,
+  Login,
+  MyOrders,
+  NotFound,
+  OrderConfirmed,
+  OrderDetails,
+  Payment,
+  Register,
+  AllOrders
+} from "../Pages";
+import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
+import { useGetShoppingCartQuery } from "../Apis/shoppingCartApi";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import ShoppingCart from "../Pages/ShoppingCart";
+import { setLoggedInUser } from "../Storage/Redux/userAuthSlice";
+import { userModel } from "../Interfaces";
+import jwt_decode from "jwt-decode";
+import { RootState } from "../Storage/Redux/store";
 
 function App() {
+  const dispatch = useDispatch();
+  const userData: userModel = useSelector(
+    (state: RootState) => state.userAuthStore
+  );
+
+  const { data, isLoading } = useGetShoppingCartQuery(userData.id);
+
+  useEffect(() => {
+    const localToken = localStorage.getItem("token");
+    if (localToken) {
+      const { fullName, id, email, role }: userModel = jwt_decode(localToken);
+      dispatch(setLoggedInUser({ fullName, id, email, role }));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      dispatch(setShoppingCart(data.result?.cartItems));
+    }
+  }, [data]);
+
   return (
     <div className="text-success">
       <Header />
       <div className="pb-5">
         <Routes>
-          <Route path="/" element={<Home/>}></Route>
-          <Route path="/foodItemDetails/:foodItemId" element={<FoodItemDetails/>}></Route>
-          <Route path="*" element={<NotFound/>}></Route>
+          <Route path="/" element={<Home />}></Route>
+          <Route
+            path="/foodItemDetails/:foodItemId"
+            element={<FoodItemDetails />}
+          ></Route>
+          <Route path="/shoppingCart" element={<ShoppingCart />}></Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/authentication"
+            element={<AuthenticationTest />}
+          ></Route>
+          <Route
+            path="/authorization"
+            element={<AuthenticationTestAdmin />}
+          ></Route>
+          <Route path="/accessDenied" element={<AccessDenied />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route
+            path="order/orderconfirmed/:id"
+            element={<OrderConfirmed />}
+          ></Route>
+          <Route path="/order/myOrders" element={<MyOrders />} />
+          <Route path="/order/orderDetails/:id" element={<OrderDetails />} />
+          <Route path="/order/allOrders" element={<AllOrders />} />
+          <Route path="*" element={<NotFound />}></Route>
         </Routes>
       </div>
-    
+
       <Footer />
     </div>
   );

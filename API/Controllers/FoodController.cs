@@ -18,14 +18,14 @@ namespace API.Controllers
             _service = service;
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> GetAllFoods()
         {
             var serviceResponse=await _service.GetAllFood();
 
             return Ok(serviceResponse.Data);
         }
-        [HttpGet("ById{id}",Name="GetSingleFood")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<GetFoodDto>> GetSingleFood(int id)
         {
             var serviceResponse = await _service.GetFoodById(id);

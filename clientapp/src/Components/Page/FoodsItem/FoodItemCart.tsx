@@ -1,12 +1,43 @@
-import React from "react";
-import { foodModel } from "../../../Interfaces";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { apiResponse, foodModel, userModel } from "../../../Interfaces";
+import { Link, useNavigate } from "react-router-dom";
+import { useUpdateShoppingCartMutation } from "../../../Apis/shoppingCartApi";
+import { MiniLoader } from "../Common";
+import { toastNotify } from "../../../Helper";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../Storage/Redux/store";
 
 interface Props {
   foodItem: foodModel;
 }
 
 function MenuItemCard(props: Props) {
+  const navigate = useNavigate();
+  const [isAddingToCart, setIsAddingToCart] = useState<boolean>(false);
+  const [updateShoppingCart] = useUpdateShoppingCartMutation();
+  const userData: userModel = useSelector(
+    (state: RootState) => state.userAuthStore
+  );
+
+  const handleAddToCart = async (foodItemId: number) => {
+    if (!userData.id) {
+      navigate("/login");
+      return;
+    }
+    setIsAddingToCart(true);
+
+    const response: apiResponse = await updateShoppingCart({
+      userId: userData.id,
+      foodId: foodItemId,
+      updateQuantityBy: 1,
+    });
+
+    if (response.data && response.data.isSuccess) {
+      toastNotify("Food added to cart successfully!");
+    }
+
+    setIsAddingToCart(false);
+  };
   return (
     <div className="col-md-4 col-12 p-4">
       <div
@@ -42,22 +73,38 @@ function MenuItemCard(props: Props) {
               </i>
             )}
 
-          <i
-            className="bi bi-cart-plus btn btn-outline-danger"
-            style={{
-              position: "absolute",
-              top: "15px",
-              right: "15px",
-              padding: "5px 10px",
-              borderRadius: "3px",
-              outline: "none !important",
-              cursor: "pointer",
-            }}
-          ></i>
+          {isAddingToCart ? (
+            <div
+              style={{
+                position: "absolute",
+                top: "15px",
+                right: "15px",
+              }}
+            >
+              <MiniLoader/>
+            </div>
+          ) : (
+            <i
+              className="bi bi-cart-plus btn btn-outline-danger"
+              style={{
+                position: "absolute",
+                top: "15px",
+                right: "15px",
+                padding: "5px 10px",
+                borderRadius: "3px",
+                outline: "none !important",
+                cursor: "pointer",
+              }}
+              onClick={() => handleAddToCart(props.foodItem.id)}
+            ></i>
+          )}
 
           <div className="text-center">
             <p className="card-title m-0 text-success fs-3">
-              <Link to={`/foodItemDetails/${props.foodItem.id}`} style={{textDecoration:"none"}}>
+              <Link
+                to={`/foodItemDetails/${props.foodItem.id}`}
+                style={{ textDecoration: "none" }}
+              >
                 {props.foodItem.name}
               </Link>
             </p>
