@@ -12,6 +12,8 @@ import OrderConfirmed from "./Order/OrderConfirmed";
 import MyOrders from "./Order/MyOrders";
 import OrderDetails from "./Order/OrderDetails";
 import AllOrders from "./Order/AllOrders";
+import MenuItemList from "./FoodItem/MenuItemList";
+import MenuItemUpsert from "./FoodItem/MenuItemUpsert";
 export 
 {Home, NotFound, FoodItemDetails, ShoppingCart, Login, Register, AuthenticationTest,
-    AuthenticationTestAdmin,AccessDenied,Payment, OrderConfirmed, MyOrders,OrderDetails, AllOrders};
+    AuthenticationTestAdmin,AccessDenied,Payment, OrderConfirmed, MyOrders,OrderDetails, AllOrders, MenuItemList, MenuItemUpsert};

@@ -19,8 +19,33 @@ const foodItemApi = createApi({
       }),
       providesTags: ["FoodItems"],
     }),
+    createFoodItem: builder.mutation({
+      query: (data) => ({
+        url: "Food",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: ["FoodItems"],
+    }),
+    updateFoodItem: builder.mutation({
+      query: ({ data, id }) => ({
+        url: "Food/" + id,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["FoodItems"],
+    }),
+    deleteFoodItem: builder.mutation({
+      query: (id) => ({
+        url: "Food/" + id,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["FoodItems"],
+    }),
   }),
 });
 
-  export const { useGetFoodItemsQuery, useGetFoodItemByIdQuery} = foodItemApi;
+  export const { useGetFoodItemsQuery, useGetFoodItemByIdQuery,  useCreateFoodItemMutation,
+    useUpdateFoodItemMutation,
+    useDeleteFoodItemMutation} = foodItemApi;
   export default foodItemApi;

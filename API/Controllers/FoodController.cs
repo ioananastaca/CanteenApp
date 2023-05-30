@@ -56,7 +56,7 @@ namespace API.Controllers
             return Ok(await _service.AddFood(newFood));
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> UpdateFood(int id, UpdateFoodDto updatedFood)
         {
             var response = await _service.UpdateFood(id, updatedFood);

@@ -11,3 +11,15 @@ export enum SD_Roles {
     COMPLETED = "Completed",
     CANCELLED = "Cancelled",
   }
+
+  export enum SD_Categories {
+    SUPE = "Supe",
+    PRINCIPAL = "Fel principal",
+    DESERT = "Desert",
+
+  }
+  
+  export enum SD_Types{
+    VEGAN = "Vegan",
+    NONVEGAN = "Non-vegan"
+  }
