@@ -4,6 +4,7 @@ import FoodItemCart from "./FoodItemCart";
 
 function FoodItemList() {
   const [foodItems, setFoodItems] = useState<foodModel[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -15,7 +16,11 @@ function FoodItemList() {
         return response.json();
       })
       .then((data) => {
-        setFoodItems(data);
+        setFoodItems(data.data);
+        const uniqueCategories = Array.from(
+          new Set<string>(data.data.map((food: foodModel) => food.categoryName))
+        );
+        setCategories(uniqueCategories);
       })
       .catch((error) => {
         setError(error.message);
