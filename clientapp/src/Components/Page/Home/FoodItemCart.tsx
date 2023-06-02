@@ -7,6 +7,7 @@ import { toastNotify } from "../../../Helper";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../Storage/Redux/store";
 
+
 interface Props {
   foodItem: foodModel;
 }
@@ -38,100 +39,57 @@ function MenuItemCard(props: Props) {
 
     setIsAddingToCart(false);
   };
+
+  const allergens = props.foodItem.allergenNames || [];
+
   return (
-    <div className="col-md-4 col-12 p-4">
-      <div
-        className="card"
-        style={{ boxShadow: "0 1px 7px 0 rgb(0 0 0 / 50%)" }}
-      >
-        <div className="card-body pt-2">
-          <div className="row col-10 offset-1 p-4">
-            <Link to={`/foodItemDetails/${props.foodItem.id}`}>
-              <img
-                src={props.foodItem.imageUrl}
-                style={{ borderRadius: "50%" }}
-                alt=""
-                className="w-100 mt-5 image-box"
-              />
-            </Link>
+    <div className="col-md-4 col-6 p-2">
+      <div className="card h-100 menu-item-card">
+        <Link to={`/foodItemDetails/${props.foodItem.id}`}>
+          <img
+            src={props.foodItem.imageUrl}
+            className="card-img-top"
+            alt={props.foodItem.name}
+          />
+          <div className="card-overlay">
+            <h5>{props.foodItem.foodTypeName}</h5>
+            <ul>
+              <li>Alergeni:</li>
+              {allergens.map((allergen: string, index: number) => (
+  <li key={index}>{allergen.trim()}</li>
+))}
+            </ul>
           </div>
-          {props.foodItem.foodTypeName &&
-            props.foodItem.foodTypeName.length > 0 && (
+        </Link>
+        <div className="card-body">
+          <h5 className="card-title">
+            <Link
+              to={`/foodItemDetails/${props.foodItem.id}`}
+              style={{ textDecoration: "none" }}
+            >
+              {props.foodItem.name}
+            </Link>
+          </h5>
+          <p className="card-text">{props.foodItem.description}</p>
+          <div className="d-flex justify-content-between align-items-center">
+            <p className="badge bg-secondary">{props.foodItem.categoryName}</p>
+            {isAddingToCart ? (
+              <MiniLoader />
+            ) : (
               <i
-                className="bi bi-star btn btn-success"
+                className="bi bi-cart-plus btn btn-outline-danger"
                 style={{
-                  position: "absolute",
-                  top: "15px",
-                  left: "15px",
-                  padding: "5px 10px",
-                  borderRadius: "3px",
+                  padding: "5px",
+                  borderRadius: "50%",
                   outline: "none !important",
                   cursor: "pointer",
                 }}
-              >
-                &nbsp; {props.foodItem.foodTypeName}
-              </i>
+                onClick={() => handleAddToCart(props.foodItem.id)}
+              ></i>
             )}
-
-          {isAddingToCart ? (
-            <div
-              style={{
-                position: "absolute",
-                top: "15px",
-                right: "15px",
-              }}
-            >
-              <MiniLoader/>
-            </div>
-          ) : (
-            <i
-              className="bi bi-cart-plus btn btn-outline-danger"
-              style={{
-                position: "absolute",
-                top: "15px",
-                right: "15px",
-                padding: "5px 10px",
-                borderRadius: "3px",
-                outline: "none !important",
-                cursor: "pointer",
-              }}
-              onClick={() => handleAddToCart(props.foodItem.id)}
-            ></i>
-          )}
-
-          <div className="text-center">
-            <p className="card-title m-0 text-success fs-3">
-              <Link
-                to={`/foodItemDetails/${props.foodItem.id}`}
-                style={{ textDecoration: "none" }}
-              >
-                {props.foodItem.name}
-              </Link>
-            </p>
-            <p className="badge bg-secondary" style={{ fontSize: "12px" }}>
-              {props.foodItem.categoryName}
-            </p>
           </div>
-          <p
-            className="card-text"
-            style={{
-              textAlign: "center",
-              fontWeight: "light",
-              fontSize: "14px",
-            }}
-          >
-            {props.foodItem.description}
-          </p>
-          <p
-            className="card-text"
-            style={{
-              textAlign: "center",
-              fontWeight: "light",
-              fontSize: "14px",
-            }}
-          >
-            {props.foodItem.allergenNames + " "}
-          </p>
+        </div>
+        <div className="card-footer">
           <div className="row text-center">
             <h4>{props.foodItem.price} RON</h4>
           </div>

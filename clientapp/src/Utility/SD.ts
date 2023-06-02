@@ -23,3 +23,10 @@ export enum SD_Roles {
     VEGAN = "Vegan",
     NONVEGAN = "Non-vegan"
   }
+
+  export enum SD_SortTypes {
+    PRICE_LOW_HIGH = "De la cel mai mic pret",
+    PRICE_HIGH_LOW = "De la cel mai mare pret",
+    NAME_A_Z = "Denumire A - Z",
+    NAME_Z_A = "Denumire Z - A",
+  }

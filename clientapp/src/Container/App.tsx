@@ -20,7 +20,7 @@ import {
 import { setShoppingCart } from "../Storage/Redux/shoppingCartSlice";
 import { useGetShoppingCartQuery } from "../Apis/shoppingCartApi";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ShoppingCart from "../Pages/ShoppingCart";
 import { setLoggedInUser } from "../Storage/Redux/userAuthSlice";
 import { userModel } from "../Interfaces";
@@ -29,11 +29,14 @@ import { RootState } from "../Storage/Redux/store";
 
 function App() {
   const dispatch = useDispatch();
+  const [skip, setSkip]=useState(true);
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
   );
 
-  const { data, isLoading } = useGetShoppingCartQuery(userData.id);
+  const { data, isLoading } = useGetShoppingCartQuery(userData.id, {
+    skip: skip,
+  });
 
   useEffect(() => {
     const localToken = localStorage.getItem("token");
@@ -44,10 +47,15 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && data) {
+      console.log(data);
       dispatch(setShoppingCart(data.result?.cartItems));
     }
   }, [data]);
+
+  useEffect(()=>{
+    if(userData.id)setSkip(false);
+  },[userData]);
 
   return (
     <div className="text-success">
