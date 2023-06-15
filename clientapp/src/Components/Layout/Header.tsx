@@ -53,7 +53,8 @@ function Header() {
                   Meniul zilei
                 </NavLink>
               </li>
-              {userData.role == SD_Roles.CUTOMER && (
+
+              {userData.role === SD_Roles.CUTOMER && (
                 <li className="nav-item">
                   <NavLink
                     className="nav-link"
@@ -65,7 +66,7 @@ function Header() {
                   </NavLink>
                 </li>
               )}
-              {userData.role == SD_Roles.ADMIN ? (
+              {userData.role === SD_Roles.ADMIN ? (
                 <li className="nav-item dropdown">
                   <a
                     className="nav-link dropdown-toggle"
@@ -89,7 +90,23 @@ function Header() {
                       className="dropdown-item"
                       onClick={() => navigate("menuItem/menuitemlist")}
                     >
-                      Menu Item
+                      Gestiune produse
+                    </li>
+                    {/* <li className="nav-item">
+                      <NavLink
+                        className="dropdown-item"
+                        to="/dailymenupage" // Add the path for the DailyMenuPage
+                      >
+                        Meniul zilei 
+                      </NavLink>
+                    </li> */}
+                    <li className="nav-item">
+                      <NavLink
+                        className="dropdown-item"
+                        to="/statistics" // Add the path for the DailyMenuPage
+                      >
+                        Statistici
+                      </NavLink>
                     </li>
                   </ul>
                 </li>
@@ -126,11 +143,11 @@ function Header() {
                         style={{
                           border: "none",
                           height: "40px",
-                          width: "100px",
+                          width: "110px",
                         }}
                         onClick={handleLogout}
                       >
-                        Logout
+                        Ieși din cont
                       </button>
                     </li>
                   </>
@@ -140,7 +157,7 @@ function Header() {
                   <>
                     <li className="nav-item text-white">
                       <NavLink className="nav-link" to="/register">
-                        Register
+                       Creare cont
                       </NavLink>
                     </li>
                     <li className="nav-item text-white">
@@ -149,11 +166,12 @@ function Header() {
                         style={{
                           border: "none",
                           height: "40px",
-                          width: "100px",
+                          width: "110px",
+                          textAlign:"center"
                         }}
                         to="/login"
                       >
-                        Login
+                        Autentificare
                       </NavLink>
                     </li>
                   </>

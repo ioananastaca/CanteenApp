@@ -47,7 +47,7 @@ function Login() {
     <div className="container text-center">
       {loading && <MainLoader />}
       <form method="post" onSubmit={handleSubmit}>
-        <h1 className="mt-5">Login</h1>
+        <h1 className="mt-5">AUTENTIFICARE</h1>
         <div className="mt-5">
           <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
             <input

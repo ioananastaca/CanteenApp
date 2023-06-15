@@ -16,6 +16,8 @@ function FoodItemList() {
   const [sortOption, setSortOption] = useState<SD_SortTypes>(
     SD_SortTypes.NAME_A_Z
   );
+  const [selectedFoodItems, setSelectedFoodItems] = useState<number[]>([]);
+  const [showPopup, setShowPopup] = useState(false); // New state for popup visibility
 
   const sortOptions: SD_SortTypes[] = [
     SD_SortTypes.PRICE_LOW_HIGH,
@@ -68,6 +70,14 @@ function FoodItemList() {
     setSortOption(option);
   };
 
+  const handleFoodItemCheckboxChange = (foodItemId: number) => {
+    if (selectedFoodItems.includes(foodItemId)) {
+      setSelectedFoodItems(selectedFoodItems.filter((id) => id !== foodItemId));
+    } else {
+      setSelectedFoodItems([...selectedFoodItems, foodItemId]);
+    }
+  };
+
   const sortedFoodItems = foodItems.sort((a, b) => {
     if (sortOption === SD_SortTypes.PRICE_LOW_HIGH) {
       return a.price - b.price;
@@ -96,6 +106,10 @@ function FoodItemList() {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
+  };
 
   return (
     <div className="container row">
@@ -131,34 +145,83 @@ function FoodItemList() {
           ))}
         </select>
       </div>
-      {userData.role == SD_Roles.CUTOMER && ( 
-      <div className="my-3">
-        <h4>Ce alergeni ai vrea sa eviti?</h4>
-        <div className="btn-group" role="group">
-          {foodItems
-            .flatMap((food) => food.allergenNames)
-            .filter((allergen, index, self) => self.indexOf(allergen) === index)
-            .map((allergen, index) => (
-              <button
-                key={index}
-                type="button"
-                className={`btn btn-outline-primary m-2 ${
-                  selectedAllergens.includes(allergen) ? "active" : ""
-                }`}
-                onClick={() => handleAllergenChange(allergen)}
-              >
-                {allergen}
-                {selectedAllergens.includes(allergen) && (
-                  <FontAwesomeIcon icon={faCheck} />
-                )}
-              </button>
-            ))}
-        </div>  
-      </div>)}
+      {userData.role === SD_Roles.CUTOMER && (
+        <div className="my-3">
+          <h4>Ce alergeni ai vrea sa eviti?</h4>
+          <div className="btn-group" role="group">
+            {foodItems
+              .flatMap((food) => food.allergenNames)
+              .filter(
+                (allergen, index, self) => self.indexOf(allergen) === index
+              )
+              .map((allergen, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  className={`btn btn-outline-primary m-2 ${
+                    selectedAllergens.includes(allergen) ? "active" : ""
+                  }`}
+                  onClick={() => handleAllergenChange(allergen)}
+                >
+                  {allergen}
+                  {selectedAllergens.includes(allergen) && (
+                    <FontAwesomeIcon icon={faCheck} />
+                  )}
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
 
-      {filteredFoodItems.map((food) => (
-        <FoodItemCart foodItem={food} key={food.id} />
-      ))}
+      {userData.role === SD_Roles.ADMIN && (
+        <div>
+          {/* Popup */}
+          {showPopup && (
+            <div className="popup">
+              <h3>Alege Meniul</h3>
+              {/* Content */}
+              <div className="content">
+                {/* Checkbox items */}
+                {filteredFoodItems.map((food) => (
+                  <div className="form-check" key={food.id}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value={food.id}
+                      id={`foodItemCheckbox_${food.id}_popup`}
+                      checked={selectedFoodItems.includes(food.id)}
+                      onChange={() => handleFoodItemCheckboxChange(food.id)}
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor={`foodItemCheckbox_${food.id}_popup`}
+                    >
+                      {food.name}
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {/* Close button */}
+              <button className="close-button" onClick={togglePopup}>
+                Close
+              </button>
+            </div>
+          )}
+          {/* Button to toggle popup */}
+          <button className="btn btn-primary" onClick={togglePopup}>
+            Alege Meniul
+          </button>
+        </div>
+      )}
+      <div className="row ">
+        {filteredFoodItems
+          .filter((food) => selectedFoodItems.includes(food.id))
+          .map((food) => (
+            <div key={food.id}>
+              <FoodItemCart foodItem={food} key={food.id} />
+            </div>
+          ))}
+      </div>
     </div>
   );
 }

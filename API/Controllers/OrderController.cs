@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +10,6 @@ using API.Dtos.OrderDtos;
 using API.Models;
 using API.Models.Order;
 using API.Utility;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -33,7 +33,8 @@ namespace API.Controllers
                 var orderHeaders = _db.OrderHeaders.Include(u => u.OrderDetails)
                     .ThenInclude(u => u.Food)
                     .OrderByDescending(u => u.OrderHeaderId);
-                if (!string.IsNullOrEmpty(userId)){
+                if (!string.IsNullOrEmpty(userId))
+                {
                     _response.Result = orderHeaders.Where(u => u.ApplicationUserId == userId);
                 }
                 else
@@ -67,7 +68,7 @@ namespace API.Controllers
 
                 var orderHeaders = _db.OrderHeaders.Include(u => u.OrderDetails)
                     .ThenInclude(u => u.Food)
-                    .Where(u => u.OrderHeaderId==id);
+                    .Where(u => u.OrderHeaderId == id);
                 if (orderHeaders == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
@@ -101,14 +102,14 @@ namespace API.Controllers
                     OrderDate = DateTime.Now,
                     StripePaymentIntentID = orderHeaderDTO.StripePaymentIntentID,
                     TotalFoodItems = orderHeaderDTO.TotalItems,
-                    Status= String.IsNullOrEmpty(orderHeaderDTO.Status)? SD.status_pending : orderHeaderDTO.Status,
+                    Status = String.IsNullOrEmpty(orderHeaderDTO.Status) ? SD.status_pending : orderHeaderDTO.Status,
                 };
 
                 if (ModelState.IsValid)
                 {
                     _db.OrderHeaders.Add(order);
                     _db.SaveChanges();
-                    foreach(var orderDetailDTO in orderHeaderDTO.OrderDetailsDTO)
+                    foreach (var orderDetailDTO in orderHeaderDTO.OrderDetailsDTO)
                     {
                         OrderDetails orderDetails = new()
                         {
@@ -143,8 +144,8 @@ namespace API.Controllers
             {
                 if (orderHeaderUpdateDTO == null || id != orderHeaderUpdateDTO.OrderHeaderId)
                 {
-                    _response.IsSuccess=false;
-                    _response.StatusCode=HttpStatusCode.BadRequest;
+                    _response.IsSuccess = false;
+                    _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest();
                 }
                 OrderHeader orderFromDb = _db.OrderHeaders.FirstOrDefault(u => u.OrderHeaderId == id);
@@ -189,5 +190,98 @@ namespace API.Controllers
             }
             return _response;
         }
+        // [HttpGet("total-amount-per-day")]
+        // public async Task<ActionResult<ApiResponse>> GetTotalAmountPerDay()
+        // {
+        //     try
+        //     {
+        //         var orders = await _db.OrderHeaders
+        //             .ToListAsync(); // Retrieve all orders
+
+        //         var filteredOrders = orders
+        //             .Where(u => u.OrderDate.DayOfWeek >= DayOfWeek.Monday && u.OrderDate.DayOfWeek <= DayOfWeek.Friday)
+        //             .GroupBy(u => u.OrderDate.DayOfWeek)
+        //             .Select(g => new
+        //             {
+        //                 DayOfWeek = g.Key,
+        //                 TotalAmount = g.Sum(u => u.OrderTotal)
+        //             })
+        //             .ToList(); // Perform filtering and grouping on the client side
+
+        //         _response.Result = filteredOrders;
+        //         _response.StatusCode = HttpStatusCode.OK;
+        //         return Ok(_response);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _response.IsSuccess = false;
+        //         _response.ErrorMessages = new List<string>() { ex.ToString() };
+        //     }
+        //     return _response;
+        // }
+
+        // [HttpGet("total-amount-per-week")]
+        // public async Task<ActionResult<ApiResponse>> GetTotalAmountPerWeek()
+        // {
+        //     try
+        //     {
+        //         var orders = await _db.OrderHeaders
+        //             .ToListAsync(); // Retrieve all orders
+
+        //         var filteredOrders = orders
+        //             .Where(u => u.OrderDate >= DateTime.Today.AddDays(-7)) // Filter orders for the last week
+        //             .GroupBy(u => u.OrderDate.Date)
+        //             .Select(g => new
+        //             {
+        //                 WeekStartDate = g.Key.ToString("yyyy-MM-dd"),
+        //                 TotalAmount = g.Sum(u => u.OrderTotal)
+        //             })
+        //             .ToList(); // Perform filtering and grouping on the client side
+
+        //         _response.Result = filteredOrders;
+        //         _response.StatusCode = HttpStatusCode.OK;
+        //         return Ok(_response);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _response.IsSuccess = false;
+        //         _response.ErrorMessages = new List<string>() { ex.ToString() };
+        //     }
+        //     return _response;
+        // }
+
+        [HttpGet("total-amount-per-week")]
+        public async Task<ActionResult<ApiResponse>> GetTotalAmountPerWeek()
+        {
+            try
+            {
+                var orders = await _db.OrderHeaders
+                    .ToListAsync(); // Retrieve all orders
+
+                var filteredOrders = orders
+                    .Where(u => u.OrderDate >= DateTime.Today.AddDays(-20)) // Filter orders for the last 5 days
+                    .GroupBy(u => u.OrderDate.Date)
+                    .Select(g => new
+                    {
+                        OrderDate = g.Key.ToString("yyyy-MM-dd"),
+                        TotalAmount = g.Sum(u => u.OrderTotal)
+                    })
+                    .ToList(); // Perform filtering and grouping on the client side
+
+                _response.Result = filteredOrders;
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+
+
+
     }
 }

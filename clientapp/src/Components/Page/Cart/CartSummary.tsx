@@ -80,7 +80,7 @@ function CartSummary() {
               </h4>
             </div>
             <div className="flex-fill">
-              <h4 className="text-danger">${cartItem.food!.price}</h4>
+              <h4 className="text-danger">{cartItem.food!.price} RON</h4>
             </div>
             <div className="d-flex justify-content-between">
               <div

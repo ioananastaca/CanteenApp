@@ -26,6 +26,9 @@ import { setLoggedInUser } from "../Storage/Redux/userAuthSlice";
 import { userModel } from "../Interfaces";
 import jwt_decode from "jwt-decode";
 import { RootState } from "../Storage/Redux/store";
+import DailyMenuPage from "../Components/Page/Home/DailyMenuPage";
+import Statistics from "../Components/Page/Statistics";
+import UpdateFoodAllegen from "../Components/Page/Home/UpdateFoodAllegen";
 
 function App() {
   const dispatch = useDispatch();
@@ -93,6 +96,10 @@ function App() {
             element={<MenuItemUpsert />}
           />
           <Route path="/menuItem/menuItemUpsert" element={<MenuItemUpsert />} />
+          <Route path="/dailymenupage" element={<DailyMenuPage />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/updateallergen/:id" element={<UpdateFoodAllegen />} />
+
           <Route path="*" element={<NotFound />}></Route>
         </Routes>
       </div>

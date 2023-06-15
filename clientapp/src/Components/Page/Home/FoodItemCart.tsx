@@ -7,7 +7,6 @@ import { toastNotify } from "../../../Helper";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../Storage/Redux/store";
 
-
 interface Props {
   foodItem: foodModel;
 }
@@ -43,21 +42,22 @@ function MenuItemCard(props: Props) {
   const allergens = props.foodItem.allergenNames || [];
 
   return (
-    <div className="col-md-4 col-6 p-2">
-      <div className="card h-100 menu-item-card">
+    <div className="col-md-3 col-6 p-2">
+      <div className="card h-100 menu-item-card" style={{ height: "300px" }}>
         <Link to={`/foodItemDetails/${props.foodItem.id}`}>
-          <img
+        <img
             src={props.foodItem.imageUrl}
             className="card-img-top"
             alt={props.foodItem.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
           />
           <div className="card-overlay">
             <h5>{props.foodItem.foodTypeName}</h5>
             <ul>
               <li>Alergeni:</li>
               {allergens.map((allergen: string, index: number) => (
-  <li key={index}>{allergen.trim()}</li>
-))}
+                <li key={index}>{allergen.trim()}</li>
+              ))}
             </ul>
           </div>
         </Link>

@@ -42,10 +42,15 @@ const foodItemApi = createApi({
       }),
       invalidatesTags: ["FoodItems"],
     }),
+    getFoodAllergensById: builder.query({
+      query: (foodId) => ({
+        url: `Food/GetFoodAllergensById/${foodId}`,
+      }),
+    }),
   }),
 });
 
   export const { useGetFoodItemsQuery, useGetFoodItemByIdQuery,  useCreateFoodItemMutation,
     useUpdateFoodItemMutation,
-    useDeleteFoodItemMutation} = foodItemApi;
+    useDeleteFoodItemMutation, useGetFoodAllergensByIdQuery} = foodItemApi;
   export default foodItemApi;

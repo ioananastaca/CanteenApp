@@ -9,16 +9,12 @@ import { MainLoader } from "../../Components/Page/Common";
 import { SD_Categories, SD_Types } from "../../Utility/SD";
 
 const Categories = [
-    SD_Categories.SUPE,
-    SD_Categories.PRINCIPAL,
-    SD_Categories.DESERT
-  ];
+  SD_Categories.SUPE,
+  SD_Categories.PRINCIPAL,
+  SD_Categories.DESERT
+];
 
-  const Types = [
-    SD_Types.VEGAN,
-    SD_Types.NONVEGAN,
-  ];
-
+const Types = [SD_Types.VEGAN, SD_Types.NONVEGAN];
 
 const foodItemData = {
   name: "",
@@ -26,14 +22,13 @@ const foodItemData = {
   price: "",
   category: Categories[0],
   foodType: Types[0],
+  imageUrl: "", // Add imageUrl to the foodItemData
 };
 
 function MenuItemUpsert() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [foodItemInputs, setFoodItemInputs] = useState(foodItemData);
-  const [imageToBeStore, setImageToBeStore] = useState<any>();
-  const [imageToBeDisplay, setImageToBeDisplay] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [createFoodItem] = useCreateFoodItemMutation();
 
@@ -46,9 +41,9 @@ function MenuItemUpsert() {
         foodType: foodItem.result.foodType,
         category: foodItem.result.category,
         price: foodItem.result.price,
+        imageUrl: foodItem.result.imageUrl, // Set the imageUrl from the foodItem result
       };
       setFoodItemInputs(tempData);
-      setImageToBeDisplay(foodItem.result.image);
     }
   }, [foodItem]);
 
@@ -61,50 +56,14 @@ function MenuItemUpsert() {
     setFoodItemInputs(tempData);
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      const imgType = file.type.split("/")[1];
-      const validImgTypes = ["jpeg", "jpg", "png"];
-
-      const isImageTypeValid = validImgTypes.filter((e) => {
-        return e === imgType;
-      });
-
-      if (file.size > 1000 * 1024) {
-        setImageToBeStore("");
-        toastNotify("File must be less than 1 MB", "error");
-        return;
-      } else if (isImageTypeValid.length === 0) {
-        setImageToBeStore("");
-        toastNotify("File must be in JPEG, JPG, or PNG format", "error");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      setImageToBeStore(file);
-      reader.onload = (e) => {
-        const imgUrl = e.target?.result as string;
-        setImageToBeDisplay(imgUrl);
-      };
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    if (!imageToBeStore) {
-      toastNotify("Please upload an image", "error");
-      setLoading(false);
-      return;
-    }
-
     const requestData = {
       name: foodItemInputs.name,
       description: foodItemInputs.description,
-      imageUrl: "",
+      imageUrl: foodItemInputs.imageUrl, // Use the imageUrl from the input field
       foodTypeId: foodItemInputs.foodType,
       categoryId: foodItemInputs.category,
       price: foodItemInputs.price,
@@ -123,11 +82,10 @@ function MenuItemUpsert() {
     navigate("/foodItem/fooditemlist");
   };
 
-
   return (
     <div className="container border mt-5 p-5 bg-light">
       {loading && <MainLoader />}
-      <h3 className="px-2 text-success">Add Menu Item</h3>
+      <h3 className="px-2 text-success">Adaugă aliment</h3>
       <form method="post" onSubmit={handleSubmit}>
         <div className="row mt-3">
           <div className="col-md-7">
@@ -156,11 +114,11 @@ function MenuItemUpsert() {
               value={foodItemInputs.foodType}
               onChange={handleFoodItemInput}
             >
-                  {Types.map((types) => (
+              {Types.map((types) => (
                 <option value={types}>{types}</option>
               ))}
             </select>
-           <select
+            <select
               className="form-control mt-3 form-select"
               required
               placeholder="Categorie"
@@ -168,7 +126,7 @@ function MenuItemUpsert() {
               value={foodItemInputs.category}
               onChange={handleFoodItemInput}
             >
-            {Categories.map((category) => (
+              {Categories.map((category) => (
                 <option value={category}>{category}</option>
               ))}
             </select>
@@ -182,9 +140,13 @@ function MenuItemUpsert() {
               onChange={handleFoodItemInput}
             />
             <input
-              type="file"
-              onChange={handleFileChange}
+              type="text" // Change the input type to "text"
               className="form-control mt-3"
+              required
+              placeholder="Image URL"
+              name="imageUrl"
+              value={foodItemInputs.imageUrl}
+              onChange={handleFoodItemInput}
             />
             <div className="row">
               <div className="col-6">
@@ -192,7 +154,7 @@ function MenuItemUpsert() {
                   type="submit"
                   className="btn btn-success form-control mt-3"
                 >
-                  Submit
+                  Salvează
                 </button>
               </div>
               <div className="col-6">
@@ -200,14 +162,14 @@ function MenuItemUpsert() {
                   onClick={() => navigate(-1)}
                   className="btn btn-secondary form-control mt-3"
                 >
-                  Back to Menu Items
+                 Înapoi la listă alimente
                 </a>
               </div>
             </div>
           </div>
           <div className="col-md-5 text-center">
             <img
-              src={imageToBeDisplay}
+              src={foodItemInputs.imageUrl} // Display the imageUrl from the input field
               style={{ width: "100%", borderRadius: "30px" }}
               alt=""
             />

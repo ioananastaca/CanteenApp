@@ -1,5 +1,4 @@
 import React from "react";
-
 import { MainLoader } from "../../Components/Page/Common";
 import { foodModel } from "../../Interfaces";
 import { useDeleteFoodItemMutation, useGetFoodItemsQuery } from "../../Apis/foodItemApi";
@@ -12,14 +11,15 @@ function MenuItemList() {
   const [deleteFoodItem] = useDeleteFoodItemMutation();
 
   const handleMenuItemDelete = async (id: number) => {
-    toast.promise(
-      deleteFoodItem(id),
-      {
-        pending: "Processing your request...",
-        success: "Menu Item Deleted Successfully 👌",
-        error: "Error encoutnered 🤯",
-      }
-    );
+    toast.promise(deleteFoodItem(id), {
+      pending: "Processing your request...",
+      success: "Menu Item Deleted Successfully 👌",
+      error: "Error encountered 🤯",
+    });
+  };
+
+  const handleEditAllergens = (id: number) => {
+    navigate("/updateallergen/" + id);
   };
 
   return (
@@ -28,61 +28,71 @@ function MenuItemList() {
       {!isLoading && (
         <div className="table p-5">
           <div className="d-flex align-items-center justify-content-between">
-            <h1 className="text-success">MenuItem List</h1>
-            <button 
+            <h1 className="text-success">Lista alimente</h1>
+            <button
               className="btn btn-success"
               onClick={() => navigate("/menuitem/menuitemupsert")}
             >
-              Add New
+             Adaugă aliment
             </button>
           </div>
           <div className="p-2">
-            <div className="row border">
-              <div className="col-1">Image</div>
-              <div className="col-1">ID</div>
-              <div className="col-2">Name</div>
-              <div className="col-2">Category</div>
-              <div className="col-1">Price</div>
-              <div className="col-2">Tip</div>
-              <div className="col-1">Alergeni</div>
-              <div className="col-1">Action</div>
-            </div>
+            <table className="table">
+              <thead>
+                <tr className="border">
+                  <th>Image</th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Tip</th>
+                  <th>Alergeni</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((foodItem: foodModel) => (
+                  <tr className="border" key={foodItem.id}>
+                    <td>
+                      <img
+                        src={foodItem.imageUrl}
+                        alt="no content"
+                        style={{ width: "100%", maxWidth: "120px" }}
+                      />
+                    </td>
+                    <td>{foodItem.id}</td>
+                    <td>{foodItem.name}</td>
+                    <td>{foodItem.categoryName}</td>
+                    <td>{foodItem.price}Ron</td>
+                    <td>{foodItem.foodTypeName}</td>
+                    <td>{foodItem.allergenNames.join(", ")}</td>
 
-            {data.map((foodItem: foodModel) => {
-              return (
-                <div className="row border" key={foodItem.id}>
-                  <div className="col-1">
-                    <img
-                      src={foodItem.imageUrl}
-                      alt="no content"
-                      style={{ width: "100%", maxWidth: "120px" }}
-                    />
-                  </div>
-                  <div className="col-1">{foodItem.id}</div>
-                  <div className="col-2">{foodItem.name}</div>
-                  <div className="col-2">{foodItem.categoryName}</div>
-                  <div className="col-1">${foodItem.price}</div>
-                  <div className="col-2">{foodItem.foodTypeName}</div>
-                  <div className="col-2">{foodItem.allergenNames}</div>
-                  <div className="col-1">
-                    <button className="btn btn-success">
-                    <i
-                        className="bi bi-pencil-fill"
-                        onClick={() =>
-                          navigate("/menuitem/menuitemupsert/" + foodItem.id)
-                        }
-                      ></i>
-                    </button>
-                    <button
-                      className="btn btn-danger mx-2"
-                      onClick={() => handleMenuItemDelete(foodItem.id)}
-                    >
-                      <i className="bi bi-trash-fill"></i>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+                    <td className="col-lg-3">
+                      <button
+                        className="btn btn-success"
+                        onClick={() => navigate("/menuitem/menuitemupsert/" + foodItem.id)}
+                      >
+                        Editeaza
+                      </button>
+                      <button
+                        className="btn btn-info btn-sm"
+                        onClick={() => handleEditAllergens(foodItem.id)}
+                        style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}
+                      >
+                        Alergeni
+                      </button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={() => handleMenuItemDelete(foodItem.id)}
+                        style={{ marginLeft: "0.5rem" }}
+                      >
+                        Sterge
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}

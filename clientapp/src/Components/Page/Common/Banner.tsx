@@ -7,35 +7,23 @@ function Banner() {
   const [value, setValue] = useState("");
   const dispatch = useDispatch();
 
+  const handleSearch = () => {
+    dispatch(setSearchItem(value));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchItem(e.target.value));
     setValue(e.target.value);
   };
+  
+
   return (
     <div className="custom-banner">
-      <div
-        className="m-auto d-flex align-items-center"
-        style={{
-          width: "400px",
-          height: "50vh",
-        }}
-      >
-        <div className="d-flex align-items-center" style={{ width: "100%" }}>
-          <input
-            type={"text"}
-            className="form-control rounded-pill"
-            style={{
-              width: "100%",
-              padding: "20px 20px",
-            }}
-            value={value}
-            onChange={handleChange}
-            placeholder="Search for Food Items!"
-          />
-          <span style={{ position: "relative", left: "-43px" }}>
-            <i className="bi bi-search"></i>
-          </span>
-        </div>
+      <div className="custom-banner-content">
+        <h1 className="custom-banner-text">Bun venit pe Cantina USV!</h1>
+        <p className="custom-banner-subtext">Vezi ce ți-am pregătit pentru azi</p>
+        <h1 className="custom-banner-text">Grăbește-te să plasezi comanda până în ora 12:00</h1>
+        <p className="custom-banner-subtext">Noi deschidem la 12:30 și vrem să ai totul gata</p>
+       
       </div>
     </div>
   );

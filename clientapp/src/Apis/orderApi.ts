@@ -34,6 +34,13 @@ const orderApi = createApi({
       }),
       providesTags: ["Orders"],
     }),
+    getTotalAmountPerWeek: builder.query({
+      query: () => ({
+        url: "order/total-amount-per-week",
+      })
+    }),
+
+    
   }),
 });
 
@@ -42,5 +49,6 @@ export const {
   useCreateOrderMutation,
   useGetAllOrdersQuery,
   useGetOrderDetailsQuery,
+  useGetTotalAmountPerWeekQuery
 } = orderApi;
 export default orderApi;

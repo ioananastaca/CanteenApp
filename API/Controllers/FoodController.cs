@@ -1,3 +1,4 @@
+using API.Dtos.FoodAllergensDto;
 using API.Dtos.FoodDtos;
 using API.Models;
 using API.Services.FoodServices;
@@ -21,7 +22,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<ServiceResponse<List<GetFoodDto>>>> GetAllFoods()
         {
-            var serviceResponse=await _service.GetAllFood();
+            var serviceResponse = await _service.GetAllFood();
 
             return Ok(serviceResponse.Data);
         }
@@ -113,6 +114,23 @@ namespace API.Controllers
                 return BadRequest(response);
             }
             return Ok(response);
+        }
+
+
+
+        [HttpGet("GetFoodAllergensById/{foodId}")]
+        public async Task<ActionResult<GetAllergenDto>> GetFoodAllergensById(int foodId)
+        {
+            var serviceResponse = await _service.GetFoodAllergensById(foodId);
+
+            if (!serviceResponse.Success)
+            {
+                return NotFound(serviceResponse.Message);
+            }
+
+            var foodDto = serviceResponse.Data;
+
+            return Ok(foodDto);
         }
     }
 }

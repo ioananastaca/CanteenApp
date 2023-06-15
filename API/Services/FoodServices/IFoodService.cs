@@ -1,3 +1,4 @@
+using API.Dtos.FoodAllergensDto;
 using API.Dtos.FoodDtos;
 using API.Models;
 
@@ -15,5 +16,6 @@ namespace API.Services.FoodServices
         Task<ServiceResponse<GetFoodDto>>AddAllergenToFood(int foodId,int allergenId);
         Task<ServiceResponse<GetFoodDto>>DeleteAllergenFromFood(int foodId,int allergenId);
         Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodByAllergen(int allergenId);
+        Task<ServiceResponse<List<GetAllergenDto>>> GetFoodAllergensById(int foodId);
     }
 }

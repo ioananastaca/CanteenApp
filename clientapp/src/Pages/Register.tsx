@@ -20,12 +20,24 @@ function Register() {
   const handleUserInput = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
+    const { name, value } = e.target;
     const tempData = inputHelper(e, userInput);
     setUserInput(tempData);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Email validation
+    if (!userInput.userName.endsWith("@usv.ro")) {
+      // Invalid email format
+      toastNotify(
+        "Te rugam să folosești adresa furnizată de universitate. Ex:  nume@usv.ro",
+        "error"
+      );
+      return;
+    }
+
     setLoading(true);
     const response: apiResponse = await registerUser({
       userName: userInput.userName,
@@ -34,7 +46,7 @@ function Register() {
       name: userInput.name,
     });
     if (response.data) {
-      toastNotify("Registeration successful! Please login to continue.");
+      toastNotify("Înregistrare cu succes! Te rugăm să te autentifici.");
       navigate("/login");
     } else if (response.error) {
       toastNotify(response.error.data.errorMessages[0], "error");
@@ -45,9 +57,9 @@ function Register() {
 
   return (
     <div className="container text-center">
-      {loading && <MainLoader/>}
+      {loading && <MainLoader />}
       <form method="post" onSubmit={handleSubmit}>
-        <h1 className="mt-5">Register</h1>
+        <h1 className="mt-5">CREARE CONT</h1>
         <div className="mt-5">
           <div className="col-sm-6 offset-sm-3 col-xs-12 mt-4">
             <input
@@ -75,7 +87,7 @@ function Register() {
             <input
               type="password"
               className="form-control"
-              placeholder="parola"
+              placeholder="Parola"
               required
               name="password"
               value={userInput.password}
@@ -90,15 +102,17 @@ function Register() {
               name="role"
               onChange={handleUserInput}
             >
-              <option value="">--Selecteaza rol--</option>
+              <option value="">--Selectează rol--</option>
               <option value={`${SD_Roles.CUTOMER}`}>Student</option>
-              <option value={`${SD_Roles.ADMIN}`}>Admin</option>
+              {userInput.userName.endsWith("@usv.ro") && (
+                <option value={`${SD_Roles.ADMIN}`}>Admin</option>
+              )}
             </select>
           </div>
         </div>
         <div className="mt-5">
           <button type="submit" className="btn btn-success" disabled={loading}>
-            Inregistreza-te!
+            Înregistrează-te!
           </button>
         </div>
       </form>

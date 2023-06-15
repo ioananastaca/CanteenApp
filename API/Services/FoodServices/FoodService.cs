@@ -1,4 +1,5 @@
 using API.Data;
+using API.Dtos.FoodAllergensDto;
 using API.Dtos.FoodDtos;
 using API.Models;
 using AutoMapper;
@@ -328,5 +329,28 @@ namespace API.Services.FoodServices
             serviceResponse.Data = _mapper.Map<List<GetFoodDto>>(foods);
             return serviceResponse;
         }
+
+        public async Task<ServiceResponse<List<GetAllergenDto>>> GetFoodAllergensById(int foodId)
+        {
+            var serviceResponse = new ServiceResponse<List<GetAllergenDto>>();
+
+            var food = await _context.Foods
+                .Include(x => x.FoodAllergens)
+                    .ThenInclude(fa => fa.Allergen)
+                .FirstOrDefaultAsync(x => x.Id == foodId);
+
+            if (food == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Food with ID {foodId} not found.";
+                return serviceResponse;
+            }
+
+            var allergens = food.FoodAllergens.Select(fa => _mapper.Map<GetAllergenDto>(fa.Allergen)).ToList();
+
+            serviceResponse.Data = allergens;
+            return serviceResponse;
+        }
+
     }
 }
