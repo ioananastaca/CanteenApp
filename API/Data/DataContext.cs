@@ -14,7 +14,6 @@ namespace API.Data
         }
         public DbSet<ApplicationUser>ApplicationUsers{get;set;}
         public DbSet<Food> Foods => Set<Food>();
-        // public DbSet<User> Users => Set<User>();
         public DbSet<FoodCategory> FoodCategories => Set<FoodCategory>();
         public DbSet<FoodType> FoodTypes => Set<FoodType>();
         public DbSet<Allergen> Allergens => Set<Allergen>();

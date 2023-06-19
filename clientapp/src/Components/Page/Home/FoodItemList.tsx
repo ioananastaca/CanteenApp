@@ -50,6 +50,22 @@ function FoodItemList() {
       });
   }, []);
 
+  useEffect(() => {
+    // Load selected food items from localStorage
+    const storedFoodItems = localStorage.getItem("selectedFoodItems");
+    if (storedFoodItems) {
+      setSelectedFoodItems(JSON.parse(storedFoodItems));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save selected food items to localStorage
+    localStorage.setItem(
+      "selectedFoodItems",
+      JSON.stringify(selectedFoodItems)
+    );
+  }, [selectedFoodItems]);
+
   const handleCategoryClick = (category: string) => {
     if (category === selectedCategory) {
       setSelectedCategory(null);
@@ -213,14 +229,18 @@ function FoodItemList() {
           </button>
         </div>
       )}
-      <div className="row ">
-        {filteredFoodItems
-          .filter((food) => selectedFoodItems.includes(food.id))
-          .map((food) => (
-            <div key={food.id}>
-              <FoodItemCart foodItem={food} key={food.id} />
-            </div>
-          ))}
+      <div className="container">
+        <div className="row">
+          {filteredFoodItems
+            .filter((food) => selectedFoodItems.includes(food.id))
+            .map((food) => (
+              <div className="col-md-3" key={food.id}>
+                <div className="food-item-wrapper">
+                  <FoodItemCart foodItem={food} key={food.id} />
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
