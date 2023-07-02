@@ -62,17 +62,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse>> AddOrUpdateItemInCart(string userId, int foodId, int updateQuantityBy)
         {
-            // Shopping cart will have one entry per user id, even if a user has many items in cart.
-            // Cart items will have all the items in shopping cart for a user
-            // updatequantityby will have count by with an items quantity needs to be updated
-            // if it is -1 that means we have lower a count if it is 5 it means we have to add 5 count to existing count.
-            // if updatequantityby by is 0, item will be removed
-
-
-            // when a user adds a new item to a new shopping cart for the first time
-            // when a user adds a new item to an existing shopping cart (basically user has other items in cart)
-            // when a user updates an existing item count
-            // when a user removes an existing item
+            
 
             ShoppingCart shoppingCart = _db.ShoppingCarts.Include(u => u.CartItems).FirstOrDefault(u => u.UserId == userId);
             Food food = _db.Foods.FirstOrDefault(u => u.Id == foodId);
@@ -103,7 +93,6 @@ namespace API.Controllers
             else
             {
                 //shopping cart exists
-
                 CartItem cartItemInCart = shoppingCart.CartItems.FirstOrDefault(u => u.FoodId == foodId);
                 if (cartItemInCart == null)
                 {
@@ -137,7 +126,26 @@ namespace API.Controllers
                 }
             }
             return _response;
+        }
 
+        [HttpDelete("{cartItemId}")]
+        public async Task<ActionResult<ApiResponse>> DeleteCartItem(int cartItemId)
+        {
+            CartItem cartItem = await _db.CartItems.FindAsync(cartItemId);
+
+            if (cartItem == null)
+            {
+                _response.StatusCode = HttpStatusCode.NotFound;
+                _response.IsSuccess = false;
+                return NotFound(_response);
+            }
+
+            _db.CartItems.Remove(cartItem);
+            await _db.SaveChangesAsync();
+
+            _response.StatusCode = HttpStatusCode.OK;
+            return Ok(_response);
         }
     }
+
 }

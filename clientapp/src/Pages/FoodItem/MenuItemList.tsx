@@ -1,22 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MainLoader } from "../../Components/Page/Common";
 import { foodModel } from "../../Interfaces";
 import { useDeleteFoodItemMutation, useGetFoodItemsQuery } from "../../Apis/foodItemApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function MenuItemList() {
-  const { data, isLoading } = useGetFoodItemsQuery(null);
+  const { data, isLoading, refetch } = useGetFoodItemsQuery(null);
   const navigate = useNavigate();
+  const location = useLocation();
   const [deleteFoodItem] = useDeleteFoodItemMutation();
 
   const handleMenuItemDelete = async (id: number) => {
     toast.promise(deleteFoodItem(id), {
       pending: "Processing your request...",
-      success: "Menu Item Deleted Successfully 👌",
+      success: "Aliment sters cu succes 👌",
       error: "Error encountered 🤯",
     });
   };
+
+  useEffect(() => {
+    // Refetch the food items whenever the location changes
+    refetch();
+  }, [location, refetch]);
 
   const handleEditAllergens = (id: number) => {
     navigate("/updateallergen/" + id);
@@ -70,17 +76,19 @@ function MenuItemList() {
                     <td className="col-lg-3">
                       <button
                         className="btn btn-success"
-                        onClick={() => navigate("/menuitem/menuitemupsert/" + foodItem.id)}
+                        onClick={() => navigate("/menuitem/editfood/" + foodItem.id)}
                       >
                         Editeaza
                       </button>
+
                       <button
                         className="btn btn-info btn-sm"
-                        onClick={() => handleEditAllergens(foodItem.id)}
+                        onClick={() =>navigate("/menuitem/editallergens/" + foodItem.id)}
                         style={{ marginLeft: "0.5rem", fontSize: "0.8rem" }}
                       >
                         Alergeni
                       </button>
+
                       <button
                         className="btn btn-danger"
                         onClick={() => handleMenuItemDelete(foodItem.id)}

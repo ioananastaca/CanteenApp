@@ -146,7 +146,7 @@ function FoodItemList() {
         </ul>
       </div>
       <div className="my-3">
-        <label className="form-label">Sort by:</label>
+        <label className="form-label">Afisează după:</label>
         <select
           className="form-select form-select-sm"
           value={sortOption}
@@ -194,37 +194,47 @@ function FoodItemList() {
           {/* Popup */}
           {showPopup && (
             <div className="popup">
-              <h3>Alege Meniul</h3>
+              <h3>Alege meniul</h3>
               {/* Content */}
               <div className="content">
                 {/* Checkbox items */}
-                {filteredFoodItems.map((food) => (
-                  <div className="form-check" key={food.id}>
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value={food.id}
-                      id={`foodItemCheckbox_${food.id}_popup`}
-                      checked={selectedFoodItems.includes(food.id)}
-                      onChange={() => handleFoodItemCheckboxChange(food.id)}
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor={`foodItemCheckbox_${food.id}_popup`}
-                    >
-                      {food.name}
-                    </label>
-                  </div>
-                ))}
+                <div className="checkbox-container">
+                  {filteredFoodItems.map((food) => (
+                    <div className="food-card" key={food.id}>
+                      <div className="form-check">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          value={food.id}
+                          id={`foodItemCheckbox_${food.id}_popup`}
+                          checked={selectedFoodItems.includes(food.id)}
+                          onChange={() => handleFoodItemCheckboxChange(food.id)}
+                        />
+                        <label
+                          className="form-check-label"
+                          htmlFor={`foodItemCheckbox_${food.id}_popup`}
+                        >
+                          {food.name}
+                        </label>
+                      </div>
+                      <div className="food-image">
+                        <img src={food.imageUrl} alt={food.name} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
+              
               {/* Close button */}
-              <button className="close-button" onClick={togglePopup}>
-                Close
+              
+              <button className="close-button float-end" onClick={togglePopup}>
+                Inchide
               </button>
             </div>
           )}
+
           {/* Button to toggle popup */}
-          <button className="btn btn-primary" onClick={togglePopup}>
+          <button className="btn btn-primary my-2 w-100" onClick={togglePopup}>
             Alege Meniul
           </button>
         </div>

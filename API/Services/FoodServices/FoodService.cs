@@ -17,9 +17,35 @@ namespace API.Services.FoodServices
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ServiceResponse<List<GetFoodDto>>> AddFood(AddFoodDto newFood)
+        // public async Task<ServiceResponse<List<GetFoodDto>>> AddFood(AddFoodDto newFood)
+        // {
+        //     var serviceResponse = new ServiceResponse<List<GetFoodDto>>();
+
+        //     if (!await ValidateCategory(newFood.CategoryId))
+        //     {
+        //         serviceResponse.Success = false;
+        //         serviceResponse.Message = "Invalid category!";
+        //         return serviceResponse;
+        //     }
+
+        //     if (!await ValidateType(newFood.FoodTypeId))
+        //     {
+        //         serviceResponse.Success = false;
+        //         serviceResponse.Message = "Invalid type!";
+        //         return serviceResponse;
+        //     }
+
+        //     var food = _mapper.Map<Food>(newFood);
+
+        //     _context.Foods.Add(food);
+        //     await _context.SaveChangesAsync();
+
+        //     serviceResponse.Data = await _context.Foods.Select(x => _mapper.Map<GetFoodDto>(x)).ToListAsync();
+        //     return serviceResponse;
+        // }
+        public async Task<ServiceResponse<AddFoodDto>> AddFood(AddFoodDto newFood)
         {
-            var serviceResponse = new ServiceResponse<List<GetFoodDto>>();
+            var serviceResponse = new ServiceResponse<AddFoodDto>();
 
             if (!await ValidateCategory(newFood.CategoryId))
             {
@@ -40,9 +66,10 @@ namespace API.Services.FoodServices
             _context.Foods.Add(food);
             await _context.SaveChangesAsync();
 
-            serviceResponse.Data = await _context.Foods.Select(x => _mapper.Map<GetFoodDto>(x)).ToListAsync();
+            serviceResponse.Data = newFood;
             return serviceResponse;
         }
+
 
         public async Task<ServiceResponse<List<GetFoodDto>>> DeleteFood(int id)
         {
@@ -119,54 +146,122 @@ namespace API.Services.FoodServices
             return serviceResponse;
         }
 
-        public async Task<ServiceResponse<GetFoodDto>> UpdateFood(int id, UpdateFoodDto updatedFood)
+        // public async Task<ServiceResponse<GetFoodDto>> UpdateFood(int id, UpdateFoodDto updatedFood)
+        // {
+        //     var serviceResponse = new ServiceResponse<GetFoodDto>();
+        //     try
+        //     {
+        //         var existingFood = await _context.Foods.FirstOrDefaultAsync(f => f.Id == id);
+        //         if (existingFood is null)
+        //         {
+        //             serviceResponse.Success = false;
+        //             serviceResponse.Message = "Food not found.";
+        //             return serviceResponse;
+        //         }
+
+
+        //         var category = await _context.FoodCategories.FirstOrDefaultAsync(c => c.Id == updatedFood.CategoryId);
+        //         if (category == null)
+        //         {
+        //             serviceResponse.Success = false;
+        //             serviceResponse.Message = "Invalid category id.";
+        //             return serviceResponse;
+        //         }
+
+        //         var type = await _context.FoodTypes.FirstOrDefaultAsync(t => t.Id == updatedFood.FoodTypeId);
+        //         if (type == null)
+        //         {
+        //             serviceResponse.Success = false;
+        //             serviceResponse.Message = "Invalid type id.";
+        //             return serviceResponse;
+        //         }
+
+        //         existingFood.Name = updatedFood.Name;
+        //         existingFood.Description = updatedFood.Description;
+        //         existingFood.ImageUrl = updatedFood.ImageUrl;
+        //         existingFood.Price = (double)updatedFood.Price;
+        //         existingFood.Category = category;
+        //         existingFood.Type = type;
+
+        //         await _context.SaveChangesAsync();
+
+        //         serviceResponse.Data = _mapper.Map<GetFoodDto>(existingFood);
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         serviceResponse.Success = false;
+        //         serviceResponse.Message = ex.Message;
+        //     }
+        //     return serviceResponse;
+        // }
+public async Task<ServiceResponse<GetFoodDto>> UpdateFood(int id, UpdateFoodDto updatedFood)
+{
+    var serviceResponse = new ServiceResponse<GetFoodDto>();
+    try
+    {
+        var existingFood = await _context.Foods.FirstOrDefaultAsync(f => f.Id == id);
+        if (existingFood is null)
         {
-            var serviceResponse = new ServiceResponse<GetFoodDto>();
-            try
-            {
-                var existingFood = await _context.Foods.FirstOrDefaultAsync(f => f.Id == id);
-                if (existingFood is null)
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Food not found.";
-                    return serviceResponse;
-                }
-
-
-                var category = await _context.FoodCategories.FirstOrDefaultAsync(c => c.Id == updatedFood.CategoryId);
-                if (category == null)
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Invalid category id.";
-                    return serviceResponse;
-                }
-
-                var type = await _context.FoodTypes.FirstOrDefaultAsync(t => t.Id == updatedFood.FoodTypeId);
-                if (type == null)
-                {
-                    serviceResponse.Success = false;
-                    serviceResponse.Message = "Invalid type id.";
-                    return serviceResponse;
-                }
-
-                existingFood.Name = updatedFood.Name;
-                existingFood.Description = updatedFood.Description;
-                existingFood.ImageUrl = updatedFood.ImageUrl;
-                existingFood.Price = (double)updatedFood.Price;
-                existingFood.Category = category;
-                existingFood.Type = type;
-
-                await _context.SaveChangesAsync();
-
-                serviceResponse.Data = _mapper.Map<GetFoodDto>(existingFood);
-            }
-            catch (Exception ex)
-            {
-                serviceResponse.Success = false;
-                serviceResponse.Message = ex.Message;
-            }
+            serviceResponse.Success = false;
+            serviceResponse.Message = "Food not found.";
             return serviceResponse;
         }
+
+        if (updatedFood.Name != null)
+        {
+            existingFood.Name = updatedFood.Name;
+        }
+
+        if (updatedFood.Description != null)
+        {
+            existingFood.Description = updatedFood.Description;
+        }
+
+        if (updatedFood.ImageUrl != null)
+        {
+            existingFood.ImageUrl = updatedFood.ImageUrl;
+        }
+
+        if (updatedFood.Price != null)
+        {
+            existingFood.Price = (double)updatedFood.Price;
+        }
+
+        if (updatedFood.CategoryId != null)
+        {
+            var category = await _context.FoodCategories.FirstOrDefaultAsync(c => c.Id == updatedFood.CategoryId);
+            if (category == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Invalid category id.";
+                return serviceResponse;
+            }
+            existingFood.Category = category;
+        }
+
+        if (updatedFood.FoodTypeId != null)
+        {
+            var type = await _context.FoodTypes.FirstOrDefaultAsync(t => t.Id == updatedFood.FoodTypeId);
+            if (type == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = "Invalid type id.";
+                return serviceResponse;
+            }
+            existingFood.Type = type;
+        }
+
+        await _context.SaveChangesAsync();
+
+        serviceResponse.Data = _mapper.Map<GetFoodDto>(existingFood);
+    }
+    catch (Exception ex)
+    {
+        serviceResponse.Success = false;
+        serviceResponse.Message = ex.Message;
+    }
+    return serviceResponse;
+}
 
         public async Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodsByCategory(int categoryId)
         {

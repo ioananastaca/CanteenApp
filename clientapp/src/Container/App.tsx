@@ -28,7 +28,10 @@ import jwt_decode from "jwt-decode";
 import { RootState } from "../Storage/Redux/store";
 import DailyMenuPage from "../Components/Page/Home/DailyMenuPage";
 import Statistics from "../Components/Page/Statistics";
-import UpdateFoodAllegen from "../Components/Page/Home/UpdateFoodAllegen";
+import EditFood from "../Pages/FoodItem/EditFood";
+import EditAllergens from "../Pages/FoodItem/EditAllergens";
+import OrderConfirmedWp from "../Pages/Order/OrderConfirmedWP";
+
 
 function App() {
   const dispatch = useDispatch();
@@ -87,18 +90,23 @@ function App() {
             path="order/orderconfirmed/:id"
             element={<OrderConfirmed />}
           ></Route>
+           <Route
+            path="order/orderconfirmed"
+            element={<OrderConfirmedWp />}
+          ></Route>
           <Route path="/order/myOrders" element={<MyOrders />} />
           <Route path="/order/orderDetails/:id" element={<OrderDetails />} />
           <Route path="/order/allOrders" element={<AllOrders />} />
           <Route path="/menuItem/menuitemlist" element={<MenuItemList />} />
           <Route
-            path="/menuItem/menuItemUpsert/:id"
-            element={<MenuItemUpsert />}
+            path="/menuItem/editfood/:id"
+            element={<EditFood />}
           />
           <Route path="/menuItem/menuItemUpsert" element={<MenuItemUpsert />} />
           <Route path="/dailymenupage" element={<DailyMenuPage />} />
           <Route path="/statistics" element={<Statistics />} />
-          <Route path="/updateallergen/:id" element={<UpdateFoodAllegen />} />
+          <Route path="/menuItem/editallergens/:id" element={<EditAllergens />} />
+     
 
           <Route path="*" element={<NotFound />}></Route>
         </Routes>

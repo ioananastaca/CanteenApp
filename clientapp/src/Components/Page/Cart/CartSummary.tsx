@@ -14,12 +14,13 @@ function CartSummary() {
   const shoppingCartFromStore: cartItemModel[] = useSelector(
     (state: RootState) => state.shoppingCartStore.cartItems ?? []
   );
+
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
   );
 
-  if (!shoppingCartFromStore) {
-    return <div>Shopping Cart Empty</div>;
+  if (shoppingCartFromStore.length === 0) {
+    return <div>Cosul dumneavoastra este gol</div>;
   }
 
   const handleQuantity = (
@@ -30,19 +31,22 @@ function CartSummary() {
       (updateQuantityBy == -1 && cartItem.quantity == 1) ||
       updateQuantityBy == 0
     ) {
-      //remove the item
+      //remove item
+
       updateShoppingCart({
-        menuItemId: cartItem.food?.id,
+        userId: userData.id,
+        foodId: cartItem.food?.id,
         updateQuantityBy: 0,
-        userId: userData.id
+        
       });
       dispatch(removeFromCart({ cartItem, quantity: 0 }));
     } else {
-      //update the quantity with the new quantity
+      //update quantity
       updateShoppingCart({
-        menuItemId: cartItem.food?.id,
+        userId: userData.id,
+        foodId: cartItem.food?.id,
         updateQuantityBy: updateQuantityBy,
-        userId: userData.id
+        
       });
       dispatch(
         updateQuantity({
@@ -76,7 +80,7 @@ function CartSummary() {
             <div className="d-flex justify-content-between align-items-center">
               <h4 style={{ fontWeight: 300 }}>{cartItem.food?.name}</h4>
               <h4>
-                ${(cartItem.quantity! * cartItem.food!.price).toFixed(2)}
+                {(cartItem.quantity! * cartItem.food!.price).toFixed(2)} RON
               </h4>
             </div>
             <div className="flex-fill">

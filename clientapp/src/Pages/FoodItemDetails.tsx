@@ -42,7 +42,7 @@ function FoodItemDetails() {
     });
 
     if (response.data && response.data.isSuccess) {
-      toastNotify("Item added to cart successfully!");
+      toastNotify("Aliment adaugat cu succes!");
     }
 
     setIsAddingToCart(false);
@@ -81,10 +81,13 @@ function FoodItemDetails() {
               {data.foodTypeName}
             </span>
           </span>
-          <p style={{ fontSize: "20px" }} className="pt-2">
-            {data.description}
+          <p
+            style={{ fontSize: "20px", lineHeight: "1.5", margin: "10px 0" }}
+            className="pt-2"
+          >
+            Descriere: {data.description}
           </p>
-          <span className="h3">${data.price}</span> &nbsp;&nbsp;&nbsp;
+          <span className="h3">{data.price} RON</span> &nbsp;&nbsp;&nbsp;
           <span
             className="pb-2  p-3"
             style={{ border: "1px solid #333", borderRadius: "30px" }}
@@ -116,7 +119,7 @@ function FoodItemDetails() {
                   className="btn btn-success form-control"
                   onClick={() => handleAddToCart(data.id)}
                 >
-                  Add to Cart
+                  Adaugă
                 </button>
               )}
             </div>
@@ -126,7 +129,7 @@ function FoodItemDetails() {
                 className="btn btn-secondary form-control"
                 onClick={() => navigate(-1)}
               >
-                Back to Home
+                Înapoi la meniu
               </button>
             </div>
           </div>

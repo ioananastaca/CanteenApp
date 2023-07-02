@@ -10,7 +10,12 @@ function Footer() {
             <p>
               Email: <a href="mailto:cantina@usv.ro">cantina@usv.ro</a>
             </p>
+            <div className="col-lg-6">
+              <h5>Adresa</h5>
+              <p>Str. Universității nr. 13</p>
+            </div>
           </div>
+
           <div className="col-lg-6">
             <h5>Program</h5>
             <p>

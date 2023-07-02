@@ -18,6 +18,8 @@ function MenuItemCard(props: Props) {
   const userData: userModel = useSelector(
     (state: RootState) => state.userAuthStore
   );
+  const currentTime = new Date();
+  const isBefore12 = currentTime.getHours() < 24;
 
   const handleAddToCart = async (foodItemId: number) => {
     if (!userData.id) {
@@ -33,7 +35,7 @@ function MenuItemCard(props: Props) {
     });
 
     if (response.data && response.data.isSuccess) {
-      toastNotify("Food added to cart successfully!");
+      toastNotify("Aliment adaugat cu succes!");
     }
 
     setIsAddingToCart(false);
@@ -45,19 +47,23 @@ function MenuItemCard(props: Props) {
     <div className="col-md-3 col-6 p-2">
       <div className="card h-100 menu-item-card" style={{ height: "300px" }}>
         <Link to={`/foodItemDetails/${props.foodItem.id}`}>
-        <img
+          <img
             src={props.foodItem.imageUrl}
             className="card-img-top"
             alt={props.foodItem.name}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
           <div className="card-overlay">
             <h5>{props.foodItem.foodTypeName}</h5>
             <ul>
               <li>Alergeni:</li>
-              {allergens.map((allergen: string, index: number) => (
-                <li key={index}>{allergen.trim()}</li>
-              ))}
+              {allergens.length > 0 ? (
+                allergens.map((allergen, index) => (
+                  <li key={index}>{allergen.trim()}</li>
+                ))
+              ) : (
+                <li>Nu conține alergeni cunoscuți</li>
+              )}
             </ul>
           </div>
         </Link>
@@ -73,23 +79,21 @@ function MenuItemCard(props: Props) {
           <p className="card-text">{props.foodItem.description}</p>
           <div className="d-flex justify-content-between align-items-center">
             <p className="badge bg-secondary">{props.foodItem.categoryName}</p>
-            {isAddingToCart ? (
-              <MiniLoader />
-            ) : (
-              <i
-                className="bi bi-cart-plus btn btn-outline-danger"
-                style={{
-                  padding: "5px",
-                  borderRadius: "50%",
-                  outline: "none !important",
-                  cursor: "pointer",
-                }}
+            {isBefore12 && (
+              <div
+                className="add-to-cart-button"
                 onClick={() => handleAddToCart(props.foodItem.id)}
-              ></i>
+              >
+                {isAddingToCart ? (
+                  <MiniLoader />
+                ) : (
+                  <i className="bi bi-cart-plus btn btn-outline-danger"></i>
+                )}
+              </div>
             )}
           </div>
         </div>
-        <div className="card-footer">
+        <div className="card-footer cart-container">
           <div className="row text-center">
             <h4>{props.foodItem.price} RON</h4>
           </div>

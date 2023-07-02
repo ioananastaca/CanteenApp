@@ -7,7 +7,8 @@ namespace API.Services.FoodServices
     public interface IFoodService
     {
         Task<ServiceResponse<List<GetFoodDto>>> GetAllFood();
-        Task<ServiceResponse<List<GetFoodDto>>> AddFood(AddFoodDto newFood);
+        // Task<ServiceResponse<List<GetFoodDto>>> AddFood(AddFoodDto newFood);
+        Task<ServiceResponse<AddFoodDto>> AddFood(AddFoodDto newFood);
         Task<ServiceResponse<GetFoodDto>> GetFoodById(int id);
         Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodsByCategory(int categoryId);
         Task<ServiceResponse<List<GetFoodDto>>> GetAllFoodsByType(int typeId);

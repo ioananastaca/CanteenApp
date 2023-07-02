@@ -33,7 +33,13 @@ export default function CartPickUpDetails() {
   const [userInput, setUserInput] = useState(initialUserData);
   const [initiatePayment] = useInitiatePaymentMutation();
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const tempData = inputHelper(e, userInput);
+    let value = e.target.value;
+
+    if (e.target.name === "phoneNumber" && value.length > 15) {
+      value = value.slice(0, 15); // Truncate the value to 15 characters
+    }
+
+    const tempData = inputHelper(e, { ...userInput, [e.target.name]: value });
     setUserInput(tempData);
   };
 
@@ -43,8 +49,8 @@ export default function CartPickUpDetails() {
       email: userData.email,
       phoneNumber: "",
     });
-  }, [userData]); 
-  
+  }, [userData]);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -63,7 +69,7 @@ export default function CartPickUpDetails() {
       <hr />
       <form onSubmit={handleSubmit} className="col-10 mx-auto">
         <div className="form-group mt-3">
-       Nume
+          Nume
           <input
             type="text"
             value={userInput.name}
@@ -75,7 +81,7 @@ export default function CartPickUpDetails() {
           />
         </div>
         <div className="form-group mt-3">
-        Email
+          Email
           <input
             type="email"
             value={userInput.email}
@@ -90,15 +96,24 @@ export default function CartPickUpDetails() {
         <div className="form-group mt-3">
           Telefon
           <input
-            type="phone"
+            type="text"
+            pattern="[0-9]*"
             value={userInput.phoneNumber}
             className="form-control"
-            placeholder="phone number..."
+            placeholder="numarul de telefon"
             name="phoneNumber"
             onChange={handleUserInput}
+            maxLength={15}
             required
           />
+          {userInput.phoneNumber.length > 0 &&
+            !/^\d+$/.test(userInput.phoneNumber) && (
+              <span className="text-danger">
+                Doar caractere numerice permise
+              </span>
+            )}
         </div>
+
         <div className="form-group mt-3">
           <div className="card p-3" style={{ background: "ghostwhite" }}>
             <h5>Total comanda : {grandTotal.toFixed(2)} RON</h5>
@@ -108,9 +123,9 @@ export default function CartPickUpDetails() {
         <button
           type="submit"
           className="btn btn-lg btn-success form-control mt-3"
-          disabled={loading}
+          disabled={loading || shoppingCartFromStore.length === 0}
         >
-          {loading ? <MiniLoader /> : "Comanda!"}
+          {loading ? <MiniLoader /> : "Continuați"}
         </button>
       </form>
     </div>
