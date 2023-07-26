@@ -84,6 +84,10 @@ function Login() {
 
         <div className="mt-2">
           {error && <p className="text-danger">{error}</p>}
+          <br> 
+          
+          
+          </br>
           <button
             type="submit"
             className="btn btn-success"
@@ -93,7 +97,23 @@ function Login() {
           </button>
         </div>
       </form>
+      <br>
+      
+      
+      
+      
+      </br>
       <ToastContainer />
+      <br>
+      
+      
+
+
+      
+      
+
+      
+      </br>
     </div>
   );
 }

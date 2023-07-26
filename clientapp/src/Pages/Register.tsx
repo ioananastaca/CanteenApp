@@ -27,7 +27,7 @@ function Register() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     // Email validation
     if (!userInput.userName.endsWith("@usv.ro")) {
       // Invalid email format
@@ -37,7 +37,7 @@ function Register() {
       );
       return;
     }
-
+  
     setLoading(true);
     const response: apiResponse = await registerUser({
       userName: userInput.userName,
@@ -45,15 +45,26 @@ function Register() {
       role: userInput.role,
       name: userInput.name,
     });
+  
     if (response.data) {
       toastNotify("Înregistrare cu succes! Te rugăm să te autentifici.");
       navigate("/login");
     } else if (response.error) {
-      toastNotify(response.error.data.errorMessages[0], "error");
+      const errorMessages = response.error.data.errorMessages;
+      if (errorMessages && errorMessages.length > 0) {
+        if (errorMessages[0] === "Username already exists") {
+          toastNotify("Utilizatorul există!", "error");
+        } else {
+          toastNotify(errorMessages[0], "error");
+        }
+      } else {
+        toastNotify("Utilizatorul exista!", "error");
+      }
     }
-
+  
     setLoading(false);
   };
+  
 
   return (
     <div className="container text-center">
@@ -104,7 +115,7 @@ function Register() {
             >
               <option value="">--Selectează rol--</option>
               <option value={`${SD_Roles.CUTOMER}`}>Student</option>
-              {userInput.userName.endsWith("@usv.ro") && (
+              {userInput.userName.endsWith("@admin") && (
                 <option value={`${SD_Roles.ADMIN}`}>Admin</option>
               )}
             </select>

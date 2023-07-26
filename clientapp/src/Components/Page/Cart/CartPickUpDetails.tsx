@@ -103,7 +103,8 @@ export default function CartPickUpDetails() {
             placeholder="numarul de telefon"
             name="phoneNumber"
             onChange={handleUserInput}
-            maxLength={15}
+            maxLength={10}
+            minLength={10}
             required
           />
           {userInput.phoneNumber.length > 0 &&

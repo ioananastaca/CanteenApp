@@ -10,7 +10,7 @@ import { RootState } from "../../../Storage/Redux/store";
 function OrderList({ isLoading, orderData }: OrderListProps) {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const daysPerPage = 3;
+  const daysPerPage = 2;
   const [orderedFoods, setOrderedFoods] = useState<{ [food: string]: number }>({});
 
   useEffect(() => {
@@ -68,7 +68,7 @@ function OrderList({ isLoading, orderData }: OrderListProps) {
           {userData.role === SD_Roles.ADMIN && (
             <div className="row border mb-3">
               <div className="col-12">
-                <h2 className="text-primary">Alimente comandate astăzi:</h2>
+                <h2 className="text-primary">Necesar porții astăzi:</h2>
                 <table className="table">
                   <thead>
                     <tr>

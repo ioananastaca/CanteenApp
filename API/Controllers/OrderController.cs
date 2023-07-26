@@ -88,7 +88,66 @@ namespace API.Controllers
         }
 
 
-        [HttpPost]
+        // [HttpPost]
+        // public async Task<ActionResult<ApiResponse>> CreateOrder([FromBody] OrderHeaderCreateDto orderHeaderDTO)
+        // {
+        //     try
+        //     {
+        //         OrderHeader order = new()
+        //         {
+        //             ApplicationUserId = orderHeaderDTO.ApplicationUserId,
+        //             PickupEmail = orderHeaderDTO.PickupEmail,
+        //             PickupName = orderHeaderDTO.PickupName,
+        //             PickupPhoneNumber = orderHeaderDTO.PickupPhoneNumber,
+        //             OrderTotal = orderHeaderDTO.OrderTotal,
+        //             OrderDate = DateTime.Now,
+        //             StripePaymentIntentID = orderHeaderDTO.StripePaymentIntentID,
+        //             TotalFoodItems = orderHeaderDTO.TotalItems,
+        //             Status = String.IsNullOrEmpty(orderHeaderDTO.Status) ? SD.status_pending : orderHeaderDTO.Status,
+        //         };
+
+        //         if (ModelState.IsValid)
+        //         {
+        //             _db.OrderHeaders.Add(order);
+        //             _db.SaveChanges();
+
+        //             // Clear shopping cart data for the user
+        //             var userId = orderHeaderDTO.ApplicationUserId;
+        //             var userCart = _db.ShoppingCarts.FirstOrDefault(cart => cart.UserId == userId);
+        //             if (userCart != null)
+        //             {
+        //                 _db.CartItems.RemoveRange(userCart.CartItems);
+        //                 _db.SaveChanges();
+        //             }
+
+        //             foreach (var orderDetailDTO in orderHeaderDTO.OrderDetailsDTO)
+        //             {
+        //                 OrderDetails orderDetails = new()
+        //                 {
+        //                     OrderHeaderId = order.OrderHeaderId,
+        //                     FoodName = orderDetailDTO.FoodName,
+        //                     FoodId = orderDetailDTO.FoodId,
+        //                     Price = orderDetailDTO.Price,
+        //                     Quantity = orderDetailDTO.Quantity,
+        //                 };
+        //                 _db.OrderDetails.Add(orderDetails);
+        //             }
+        //             _db.SaveChanges();
+
+        //             _response.Result = order;
+        //             order.OrderDetails = null;
+        //             _response.StatusCode = HttpStatusCode.Created;
+        //             return Ok(_response);
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         _response.IsSuccess = false;
+        //         _response.ErrorMessages = new List<string>() { ex.ToString() };
+        //     }
+        //     return _response;
+        // }
+  [HttpPost]
         public async Task<ActionResult<ApiResponse>> CreateOrder([FromBody] OrderHeaderCreateDto orderHeaderDTO)
         {
             try
@@ -110,16 +169,6 @@ namespace API.Controllers
                 {
                     _db.OrderHeaders.Add(order);
                     _db.SaveChanges();
-
-                    // Clear shopping cart data for the user
-                    var userId = orderHeaderDTO.ApplicationUserId;
-                    var userCart = _db.ShoppingCarts.FirstOrDefault(cart => cart.UserId == userId);
-                    if (userCart != null)
-                    {
-                        _db.CartItems.RemoveRange(userCart.CartItems);
-                        _db.SaveChanges();
-                    }
-
                     foreach (var orderDetailDTO in orderHeaderDTO.OrderDetailsDTO)
                     {
                         OrderDetails orderDetails = new()
@@ -133,7 +182,6 @@ namespace API.Controllers
                         _db.OrderDetails.Add(orderDetails);
                     }
                     _db.SaveChanges();
-
                     _response.Result = order;
                     order.OrderDetails = null;
                     _response.StatusCode = HttpStatusCode.Created;
@@ -143,11 +191,11 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
-                _response.ErrorMessages = new List<string>() { ex.ToString() };
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
             }
             return _response;
         }
-
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<ApiResponse>> UpdateOrderHeader(int id, [FromBody] OrderHeaderUpdateDto orderHeaderUpdateDTO)

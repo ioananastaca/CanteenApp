@@ -13,7 +13,7 @@ function MenuItemList() {
 
   const handleMenuItemDelete = async (id: number) => {
     toast.promise(deleteFoodItem(id), {
-      pending: "Processing your request...",
+   
       success: "Aliment sters cu succes 👌",
       error: "Error encountered 🤯",
     });

@@ -36,7 +36,8 @@ const EditFood: React.FC = () => {
     foodTypeId: 1,
   });
 
-  const [updateFoodItem, { isLoading: isUpdating }] = useUpdateFoodItemMutation();
+  const [updateFoodItem, { isLoading: isUpdating }] =
+    useUpdateFoodItemMutation();
 
   useEffect(() => {
     if (foodItem) {
@@ -178,6 +179,7 @@ const EditFood: React.FC = () => {
             onChange={handleChange}
             style={{ marginBottom: "10px", padding: "5px", width: "100%" }}
           >
+            <option value="1">Alege categoria</option>
             <option value="1">Supe/Ciorbe</option>
             <option value="2">Fel principal</option>
             <option value="3">Desert</option>
@@ -189,6 +191,8 @@ const EditFood: React.FC = () => {
             onChange={handleChange}
             style={{ marginBottom: "10px", padding: "5px", width: "100%" }}
           >
+            <option value="1">Alege tip</option>
+
             <option value="1">Vegan</option>
             <option value="2">Non-vegan</option>
           </select>
@@ -216,7 +220,6 @@ const EditFood: React.FC = () => {
       </button>
     </div>
   );
-  
 };
 
 export default EditFood;

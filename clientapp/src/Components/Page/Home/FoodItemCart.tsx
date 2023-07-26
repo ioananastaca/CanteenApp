@@ -19,7 +19,7 @@ function MenuItemCard(props: Props) {
     (state: RootState) => state.userAuthStore
   );
   const currentTime = new Date();
-  const isBefore12 = currentTime.getHours() < 24;
+  const isBefore12 = currentTime.getHours() <=12;
 
   const handleAddToCart = async (foodItemId: number) => {
     if (!userData.id) {
@@ -46,7 +46,7 @@ function MenuItemCard(props: Props) {
   return (
     <div className="col-md-3 col-6 p-2">
       <div className="card h-100 menu-item-card" style={{ height: "300px" }}>
-        <Link to={`/foodItemDetails/${props.foodItem.id}`}>
+        {/* <Link to={`/foodItemDetails/${props.foodItem.id}`}> */}
           <img
             src={props.foodItem.imageUrl}
             className="card-img-top"
@@ -66,7 +66,7 @@ function MenuItemCard(props: Props) {
               )}
             </ul>
           </div>
-        </Link>
+        {/* </Link> */}
         <div className="card-body">
           <h5 className="card-title">
             <Link
